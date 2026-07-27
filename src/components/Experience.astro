@@ -1,0 +1,95 @@
+---
+import { experience } from '../data/content';
+---
+
+<section id="experience" class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Опыт</h2>
+      <p>5 лет и 10 месяцев коммерческой разработки.</p>
+    </div>
+
+    <ol class="timeline">
+      {
+        experience.map((item) => (
+          <li class="item">
+            <div class="meta">
+              <span class="period mono">
+                {item.period}
+                <span class="duration"> · {item.duration}</span>
+              </span>
+              <h3>
+                {item.role}
+                <span class="at"> · {item.company}</span>
+              </h3>
+            </div>
+            <ul class="highlights">
+              {item.highlights.map((point) => (
+                <li>{point}</li>
+              ))}
+            </ul>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.75rem;
+  }
+
+  .item {
+    padding-bottom: 1.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .item:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .meta {
+    margin-bottom: 0.7rem;
+  }
+
+  .period {
+    display: inline-block;
+    color: var(--accent);
+    font-size: 0.82rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .duration {
+    color: var(--text-muted);
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 650;
+  }
+
+  .at {
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .highlights {
+    margin: 0;
+    padding-left: 1.15rem;
+    color: var(--text-muted);
+    max-width: 48rem;
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .highlights li::marker {
+    color: var(--accent);
+  }
+</style>

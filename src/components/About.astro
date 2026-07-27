@@ -1,0 +1,79 @@
+---
+import { about, site } from '../data/content';
+---
+
+<section id="about" class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>{about.title}</h2>
+      <p class="status mono">{site.seeking}</p>
+    </div>
+
+    <p class="about-text">{about.text}</p>
+
+    <ul class="facts">
+      {
+        about.facts.map((fact) => (
+          <li>
+            <span class="label mono">{fact.label}</span>
+            <span>{fact.value}</span>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="education">
+      <span class="label mono">Образование</span>
+      {about.education}
+    </p>
+  </div>
+</section>
+
+<style>
+  .status {
+    margin: 0;
+    color: var(--accent);
+    font-size: 0.85rem;
+  }
+
+  .about-text {
+    margin: 0 0 1.5rem;
+    max-width: 42rem;
+    font-size: 1.12rem;
+    color: var(--text);
+  }
+
+  .facts {
+    list-style: none;
+    margin: 0 0 1.25rem;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem 1.5rem;
+    max-width: 40rem;
+  }
+
+  .facts li {
+    display: grid;
+    gap: 0.15rem;
+  }
+
+  .label {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+  }
+
+  .education {
+    margin: 0;
+    max-width: 42rem;
+    color: var(--text-muted);
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  @media (max-width: 560px) {
+    .facts {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

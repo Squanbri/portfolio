@@ -1,0 +1,121 @@
+---
+interface Props {
+  images: { src: string; alt: string }[];
+  id: string;
+}
+
+const { images, id } = Astro.props;
+---
+
+<div class="slider" data-slider id={id}>
+  <div class="viewport">
+    <ul class="track" data-track>
+      {
+        images.map((image, index) => (
+          <li class="slide" data-slide={index === 0 ? 'active' : undefined}>
+            <img src={image.src} alt={image.alt} loading="lazy" width="960" height="540" />
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  {
+    images.length > 1 && (
+      <div class="controls">
+        <button type="button" class="ctrl" data-prev aria-label="Предыдущий скриншот">
+          ←
+        </button>
+        <div class="dots" data-dots>
+          {images.map((_, index) => (
+            <button
+              type="button"
+              class:list={['dot', { active: index === 0 }]}
+              data-dot={index}
+              aria-label={`Скриншот ${index + 1}`}
+            />
+          ))}
+        </div>
+        <button type="button" class="ctrl" data-next aria-label="Следующий скриншот">
+          →
+        </button>
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .slider {
+    width: 100%;
+  }
+
+  .viewport {
+    overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+  }
+
+  .track {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    transition: transform 0.3s ease;
+  }
+
+  .slide {
+    flex: 0 0 100%;
+    min-width: 100%;
+  }
+
+  .slide img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    background: var(--accent-soft);
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: 0.65rem;
+  }
+
+  .ctrl {
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    color: var(--text);
+    border-radius: 6px;
+    width: 2.25rem;
+    height: 2.25rem;
+    cursor: pointer;
+    font: inherit;
+  }
+
+  .ctrl:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .dots {
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    border: 0;
+    padding: 0;
+    background: var(--border);
+    cursor: pointer;
+  }
+
+  .dot.active {
+    background: var(--accent);
+  }
+</style>

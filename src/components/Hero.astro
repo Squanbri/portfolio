@@ -1,0 +1,163 @@
+---
+import { site } from '../data/content';
+---
+
+<section class="hero section">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow mono">{site.role}</p>
+      <h1>{site.name}</h1>
+      <p class="lead">
+        React и TypeScript · веб и мобильные приложения · 5+ лет опыта.
+        Открыт к предложениям: удалённо или гибрид, Тверь / Москва / Россия.
+      </p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#projects">Смотреть проекты</a>
+        <a class="btn btn-ghost" href={`mailto:${site.email}`}>Написать</a>
+      </div>
+    </div>
+
+    <div class="terminal" aria-hidden="true">
+      <div class="terminal-bar">
+        <span class="dot red"></span>
+        <span class="dot yellow"></span>
+        <span class="dot green"></span>
+        <span class="terminal-title mono">~/portfolio</span>
+      </div>
+      <div class="terminal-body mono">
+        <p>
+          <span class="prompt">$</span>
+          <span data-typewriter>whoami</span><span class="cursor" data-cursor></span>
+        </p>
+        <p class="output" data-type-output hidden>evgeniy_markitan · frontend</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-top: clamp(2.5rem, 6vw, 4rem);
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: center;
+  }
+
+  .eyebrow {
+    margin: 0 0 0.6rem;
+    color: var(--accent);
+    font-size: 0.85rem;
+  }
+
+  h1 {
+    margin: 0 0 0.85rem;
+    font-size: clamp(2.1rem, 5vw, 3rem);
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    font-weight: 700;
+  }
+
+  .lead {
+    margin: 0 0 1.5rem;
+    color: var(--text-muted);
+    max-width: 34rem;
+    font-size: 1.1rem;
+  }
+
+  .hero-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+  }
+
+  .terminal {
+    background: var(--terminal-bg);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    border: 1px solid color-mix(in srgb, var(--border) 60%, #000);
+  }
+
+  .terminal-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.65rem 0.85rem;
+    background: color-mix(in srgb, var(--terminal-bg) 80%, #000);
+  }
+
+  .dot {
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 50%;
+  }
+
+  .dot.red {
+    background: #ff5f56;
+  }
+
+  .dot.yellow {
+    background: #ffbd2e;
+  }
+
+  .dot.green {
+    background: #27c93f;
+  }
+
+  .terminal-title {
+    margin-left: auto;
+    color: var(--terminal-muted);
+    font-size: 0.75rem;
+  }
+
+  .terminal-body {
+    padding: 1rem 1.1rem 1.25rem;
+    color: var(--terminal-text);
+    min-height: 7rem;
+    font-size: 0.9rem;
+  }
+
+  .terminal-body p {
+    margin: 0 0 0.55rem;
+  }
+
+  .prompt {
+    color: var(--cursor);
+    margin-right: 0.45rem;
+  }
+
+  .output {
+    color: var(--terminal-muted);
+  }
+
+  .cursor {
+    display: inline-block;
+    width: 0.55ch;
+    height: 1.1em;
+    margin-left: 1px;
+    vertical-align: text-bottom;
+    background: var(--cursor);
+    animation: blink 1s steps(1) infinite;
+  }
+
+  .cursor.is-done {
+    animation: none;
+    opacity: 0;
+  }
+
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  @media (max-width: 800px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

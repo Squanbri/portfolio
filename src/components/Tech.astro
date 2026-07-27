@@ -1,0 +1,49 @@
+---
+import { techGroups } from '../data/content';
+---
+
+<section id="tech" class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Технологии</h2>
+      <p>Основной стек — React и TypeScript; также mobile и инструменты поставки.</p>
+    </div>
+
+    <div class="groups">
+      {
+        techGroups.map((group) => (
+          <div class="group">
+            <h3>{group.title}</h3>
+            <ul class="tag-list">
+              {group.items.map((item) => (
+                <li>
+                  <span class="tag">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .groups {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .group h3 {
+    margin: 0 0 0.75rem;
+    font-size: 1rem;
+    font-weight: 650;
+  }
+
+  @media (max-width: 720px) {
+    .groups {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

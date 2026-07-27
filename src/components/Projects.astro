@@ -1,0 +1,100 @@
+---
+import { projects } from '../data/content';
+import ScreenshotSlider from './ScreenshotSlider.astro';
+---
+
+<section id="projects" class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Проекты</h2>
+      <p>Избранные работы. Описания и скриншоты — заглушки.</p>
+    </div>
+
+    <div class="list">
+      {
+        projects.map((project) => (
+          <article class="project">
+            <div class="copy">
+              <h3>
+                <a href={`/projects/${project.slug}`}>{project.title}</a>
+              </h3>
+              <p>{project.summary}</p>
+              <ul class="tag-list">
+                {project.stack.map((item) => (
+                  <li>
+                    <span class="tag">{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <p class="more">
+                <a href={`/projects/${project.slug}`}>Подробнее →</a>
+              </p>
+            </div>
+            <div class="media">
+              <ScreenshotSlider images={project.screenshots} id={`slider-${project.slug}`} />
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .list {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  .project {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: clamp(1.25rem, 3vw, 2rem);
+    align-items: start;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .project:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.35rem;
+  }
+
+  h3 a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  h3 a:hover {
+    color: var(--accent);
+  }
+
+  .copy > p {
+    margin: 0 0 0.9rem;
+    color: var(--text-muted);
+  }
+
+  .more {
+    margin: 1rem 0 0;
+  }
+
+  .more a {
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .more a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 800px) {
+    .project {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

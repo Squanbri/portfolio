@@ -1,0 +1,212 @@
+---
+const links = [
+  { href: '/#about', label: 'Обо мне' },
+  { href: '/#experience', label: 'Опыт' },
+  { href: '/#tech', label: 'Технологии' },
+  { href: '/#projects', label: 'Проекты' },
+];
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="logo" href="/">EM</a>
+
+    <nav class="nav" data-nav aria-label="Основная навигация">
+      <ul class="nav-list">
+        {
+          links.map((link) => (
+            <li>
+              <a href={link.href}>{link.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <button
+        type="button"
+        class="icon-btn"
+        data-theme-toggle
+        aria-label="Переключить тему"
+        title="Тема"
+      >
+        <span class="theme-icon theme-icon-light" aria-hidden="true">☀</span>
+        <span class="theme-icon theme-icon-dark" aria-hidden="true">☾</span>
+      </button>
+      <button
+        type="button"
+        class="icon-btn menu-btn"
+        data-menu-toggle
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+        aria-label="Открыть меню"
+      >
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+
+  <nav id="mobile-nav" class="mobile-nav" data-mobile-nav hidden>
+    <ul>
+      {
+        links.map((link) => (
+          <li>
+            <a href={link.href}>{link.label}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    backdrop-filter: blur(10px);
+    background: color-mix(in srgb, var(--bg) 85%, transparent);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-height: 3.5rem;
+  }
+
+  .logo {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--text);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+  }
+
+  .logo:hover {
+    color: var(--accent);
+  }
+
+  .nav {
+    margin-left: auto;
+  }
+
+  .nav-list {
+    display: flex;
+    gap: 1.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-list a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.95rem;
+  }
+
+  .nav-list a:hover {
+    color: var(--accent);
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .icon-btn {
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg-elevated);
+    color: var(--text);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    padding: 0;
+  }
+
+  .icon-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .theme-icon-dark {
+    display: none;
+  }
+
+  :global(html[data-theme='dark']) .theme-icon-light {
+    display: none;
+  }
+
+  :global(html[data-theme='dark']) .theme-icon-dark {
+    display: inline;
+  }
+
+  .menu-btn {
+    display: none;
+  }
+
+  .menu-btn span,
+  .menu-btn span::before,
+  .menu-btn span::after {
+    display: block;
+    width: 1rem;
+    height: 2px;
+    background: currentColor;
+    position: relative;
+  }
+
+  .menu-btn span::before,
+  .menu-btn span::after {
+    content: '';
+    position: absolute;
+    left: 0;
+  }
+
+  .menu-btn span::before {
+    top: -5px;
+  }
+
+  .menu-btn span::after {
+    top: 5px;
+  }
+
+  .mobile-nav {
+    border-top: 1px solid var(--border);
+    background: var(--bg-elevated);
+  }
+
+  .mobile-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0.75rem 1rem 1rem;
+  }
+
+  .mobile-nav a {
+    display: block;
+    padding: 0.7rem 0.25rem;
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .mobile-nav a:hover {
+    color: var(--accent);
+  }
+
+  @media (max-width: 720px) {
+    .nav {
+      display: none;
+    }
+
+    .menu-btn {
+      display: grid;
+    }
+  }
+</style>
