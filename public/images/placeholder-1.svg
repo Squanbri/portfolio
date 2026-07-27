@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-label="Placeholder screenshot">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2f7a52" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#1a221c" stop-opacity="0.08"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="540" fill="#e8eee9"/>
+  <rect width="960" height="540" fill="url(#g)"/>
+  <rect x="80" y="70" width="800" height="400" rx="12" fill="#fff" stroke="#c5d0c8" stroke-width="2"/>
+  <rect x="110" y="110" width="220" height="18" rx="4" fill="#2f7a52" opacity="0.7"/>
+  <rect x="110" y="150" width="480" height="12" rx="3" fill="#b7c4ba"/>
+  <rect x="110" y="176" width="420" height="12" rx="3" fill="#c9d4cc"/>
+  <rect x="110" y="230" width="300" height="160" rx="8" fill="#dfe8e1"/>
+  <rect x="440" y="230" width="400" height="70" rx="8" fill="#d5e2d8"/>
+  <rect x="440" y="320" width="400" height="70" rx="8" fill="#d5e2d8"/>
+  <text x="480" y="500" text-anchor="middle" fill="#5a655e" font-family="ui-monospace, monospace" font-size="18">screenshot placeholder 1</text>
+</svg>

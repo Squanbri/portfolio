@@ -1,0 +1,51 @@
+---
+import { site } from '../data/content';
+---
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p class="mono">{site.name}</p>
+    <p class="muted">
+      <a href={site.phoneHref}>{site.phone}</a>
+      ·
+      <a href={`mailto:${site.email}`}>{site.email}</a>
+      ·
+      <a href={site.links.telegram} rel="noopener noreferrer" target="_blank">
+        Telegram {site.links.telegramLabel}
+      </a>
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--border);
+    padding-block: 2rem;
+    margin-top: 2rem;
+  }
+
+  .footer-inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .footer-inner p {
+    margin: 0;
+  }
+
+  .muted {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+
+  .muted a {
+    color: inherit;
+  }
+
+  .muted a:hover {
+    color: var(--accent);
+  }
+</style>

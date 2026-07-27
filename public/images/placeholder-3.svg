@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-label="Placeholder screenshot">
+  <defs>
+    <linearGradient id="g" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#2f7a52" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#121714" stop-opacity="0.05"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="540" fill="#e8eee9"/>
+  <rect width="960" height="540" fill="url(#g)"/>
+  <rect x="120" y="80" width="720" height="360" rx="14" fill="#1c2420"/>
+  <rect x="150" y="120" width="180" height="12" rx="3" fill="#3d9b6e"/>
+  <rect x="150" y="160" width="400" height="10" rx="3" fill="#7a9a84"/>
+  <rect x="150" y="190" width="340" height="10" rx="3" fill="#6f8a78"/>
+  <rect x="150" y="240" width="660" height="140" rx="8" fill="#26312b"/>
+  <text x="480" y="490" text-anchor="middle" fill="#5a655e" font-family="ui-monospace, monospace" font-size="18">screenshot placeholder 3</text>
+</svg>
