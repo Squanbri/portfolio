@@ -1,6 +1,8 @@
+/** Put your photo at public/images/avatar.jpg and set photo to '/images/avatar.jpg' */
 export const site = {
   name: 'Евгений Маркитан',
   role: 'Frontend-разработчик',
+  photo: '/images/avatar.svg',
   email: 'evgeniy-markitan@yandex.ru',
   phone: '+7 961 014-07-15',
   phoneHref: 'tel:+79610140715',

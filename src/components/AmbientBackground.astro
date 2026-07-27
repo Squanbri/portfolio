@@ -1,0 +1,136 @@
+---
+/**
+ * Soft animated atmosphere behind the hero.
+ * Colors come from CSS variables so light/dark both work.
+ */
+---
+
+<div class="ambient" aria-hidden="true">
+  <svg class="ambient-svg" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <radialGradient id="blob-a" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.28"></stop>
+        <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"></stop>
+      </radialGradient>
+      <radialGradient id="blob-b" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.18"></stop>
+        <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"></stop>
+      </radialGradient>
+      <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse">
+        <circle cx="2" cy="2" r="1.1" fill="var(--accent)" opacity="0.18"></circle>
+      </pattern>
+    </defs>
+
+    <rect width="1200" height="700" fill="url(#dots)" opacity="0.45"></rect>
+
+    <g class="blob blob-1">
+      <ellipse cx="220" cy="180" rx="220" ry="160" fill="url(#blob-a)"></ellipse>
+    </g>
+    <g class="blob blob-2">
+      <ellipse cx="980" cy="220" rx="260" ry="190" fill="url(#blob-b)"></ellipse>
+    </g>
+    <g class="blob blob-3">
+      <ellipse cx="620" cy="520" rx="280" ry="170" fill="url(#blob-a)"></ellipse>
+    </g>
+
+    <g class="ring ring-1" fill="none" stroke="var(--accent)" stroke-opacity="0.14" stroke-width="1.5">
+      <circle cx="980" cy="480" r="70"></circle>
+      <circle cx="980" cy="480" r="100" stroke-dasharray="4 10"></circle>
+    </g>
+    <g class="ring ring-2" fill="none" stroke="var(--accent)" stroke-opacity="0.1" stroke-width="1.5">
+      <circle cx="180" cy="480" r="48"></circle>
+      <circle cx="180" cy="480" r="72" stroke-dasharray="3 8"></circle>
+    </g>
+  </svg>
+</div>
+
+<style>
+  .ambient {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .ambient-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .blob {
+    transform-origin: center;
+    transform-box: fill-box;
+    will-change: transform;
+  }
+
+  .blob-1 {
+    animation: drift-a 18s ease-in-out infinite alternate;
+  }
+
+  .blob-2 {
+    animation: drift-b 22s ease-in-out infinite alternate;
+  }
+
+  .blob-3 {
+    animation: drift-c 26s ease-in-out infinite alternate;
+  }
+
+  .ring-1 {
+    transform-origin: 980px 480px;
+    animation: spin 48s linear infinite;
+  }
+
+  .ring-2 {
+    transform-origin: 180px 480px;
+    animation: spin-rev 56s linear infinite;
+  }
+
+  @keyframes drift-a {
+    from {
+      transform: translate(0, 0) scale(1);
+    }
+    to {
+      transform: translate(48px, 28px) scale(1.08);
+    }
+  }
+
+  @keyframes drift-b {
+    from {
+      transform: translate(0, 0) scale(1);
+    }
+    to {
+      transform: translate(-56px, 36px) scale(1.06);
+    }
+  }
+
+  @keyframes drift-c {
+    from {
+      transform: translate(0, 0) scale(1);
+    }
+    to {
+      transform: translate(36px, -40px) scale(1.1);
+    }
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes spin-rev {
+    to {
+      transform: rotate(-360deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .blob,
+    .ring-1,
+    .ring-2 {
+      animation: none;
+    }
+  }
+</style>

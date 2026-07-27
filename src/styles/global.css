@@ -51,10 +51,7 @@ body {
   font-size: 1.0625rem;
   line-height: 1.6;
   color: var(--text);
-  background:
-    radial-gradient(ellipse 80% 50% at 100% -10%, var(--accent-soft), transparent 50%),
-    radial-gradient(ellipse 60% 40% at 0% 100%, var(--accent-soft), transparent 45%),
-    var(--bg);
+  background: var(--bg);
   min-height: 100vh;
 }
 
