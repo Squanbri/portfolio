@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ScreenshotSlider from '../../components/ScreenshotSlider.astro';
+import ArchitectureDiagram from '../../components/ArchitectureDiagram.astro';
 import { projects, getProject } from '../../data/content';
 
 export function getStaticPaths() {
@@ -17,15 +18,22 @@ if (!project) {
 }
 
 const hasFeatures = Boolean(project.features?.length);
-const hasRichArchitecture = Boolean(project.architecture?.nodes?.length);
+const hasDecisions = Boolean(project.decisions?.length);
+const hasDiagram = Boolean(project.architecture?.diagram);
+const hasNodeFlow = Boolean(project.architecture?.nodes?.length);
+const hasRichArchitecture = hasDiagram || hasNodeFlow;
 const primaryLink = project.links[0];
 const showCta = Boolean(project.cta && primaryLink);
+const aboutParagraphs = project.paragraphs?.length
+  ? project.paragraphs
+  : [project.description];
 
 let step = 1;
 const steps = {
   about: String(step++).padStart(2, '0'),
   screens: String(step++).padStart(2, '0'),
   features: hasFeatures ? String(step++).padStart(2, '0') : null,
+  decisions: hasDecisions ? String(step++).padStart(2, '0') : null,
   architecture: String(step++).padStart(2, '0'),
   stack: String(step++).padStart(2, '0'),
 };
@@ -65,7 +73,11 @@ const steps = {
           <p class="step">{steps.about}</p>
           <h2 id="about-title">О проекте</h2>
         </div>
-        <p class="prose">{project.description}</p>
+        <div class="prose-block">
+          {aboutParagraphs.map((paragraph) => (
+            <p class="prose">{paragraph}</p>
+          ))}
+        </div>
       </section>
 
       <section class="screens block" aria-labelledby="screens-title">
@@ -96,6 +108,26 @@ const steps = {
         )
       }
 
+      {
+        hasDecisions && (
+          <section class="block" aria-labelledby="decisions-title">
+            <div class="section-title">
+              <p class="step">{steps.decisions}</p>
+              <h2 id="decisions-title">Ключевые решения</h2>
+            </div>
+
+            <ul class="decisions">
+              {project.decisions!.map((item) => (
+                <li class="decision">
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+
       <section class="block" aria-labelledby="architecture-title">
         <div class="section-title">
           <p class="step">{steps.architecture}</p>
@@ -105,30 +137,34 @@ const steps = {
         {
           hasRichArchitecture ? (
             <div class="architecture">
-              <div
-                class="architecture-flow"
-                aria-label={`Схема архитектуры ${project.title}`}
-              >
-                {project.architecture!.nodes.map((node, index) => (
-                  <>
-                    {index > 0 && (
-                      <span class="arch-arrow" aria-hidden="true">
-                        →
-                      </span>
-                    )}
-                    <div class="arch-node">
-                      <span>{node.label}</span>
-                      <strong>{node.title}</strong>
-                    </div>
-                  </>
-                ))}
-              </div>
+              {project.architecture?.diagram === 'letter-box' ? (
+                <ArchitectureDiagram title={`Схема архитектуры ${project.title}`} />
+              ) : (
+                <div
+                  class="architecture-flow"
+                  aria-label={`Схема архитектуры ${project.title}`}
+                >
+                  {project.architecture!.nodes!.map((node, index) => (
+                    <>
+                      {index > 0 && (
+                        <span class="arch-arrow" aria-hidden="true">
+                          →
+                        </span>
+                      )}
+                      <div class="arch-node">
+                        <span>{node.label}</span>
+                        <strong>{node.title}</strong>
+                      </div>
+                    </>
+                  ))}
+                </div>
+              )}
 
               {
-                project.architecture!.targets &&
-                  project.architecture!.targets.length > 0 && (
+                project.architecture?.targets &&
+                  project.architecture.targets.length > 0 && (
                     <div class="architecture-targets">
-                      {project.architecture!.targets.map((target) => (
+                      {project.architecture.targets.map((target) => (
                         <span>{target}</span>
                       ))}
                     </div>
@@ -268,8 +304,14 @@ const steps = {
     letter-spacing: -0.03em;
   }
 
+  .prose-block {
+    display: grid;
+    gap: 0.9rem;
+    max-width: 44rem;
+  }
+
   .prose {
-    max-width: 42rem;
+    max-width: 44rem;
     margin: 0;
     color: var(--text-muted);
     font-size: 1.05rem;
@@ -280,7 +322,8 @@ const steps = {
     box-shadow: var(--shadow);
   }
 
-  .features {
+  .features,
+  .decisions {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -290,22 +333,26 @@ const steps = {
     border-top: 1px solid var(--border);
   }
 
-  .feature {
+  .feature,
+  .decision {
     padding: 1.15rem 1.25rem 1.15rem 0;
     border-bottom: 1px solid var(--border);
   }
 
-  .feature:nth-child(even) {
+  .feature:nth-child(even),
+  .decision:nth-child(even) {
     padding-left: 1.25rem;
     padding-right: 0;
   }
 
-  .feature h3 {
+  .feature h3,
+  .decision h3 {
     margin: 0 0 0.3rem;
     font-size: 1.05rem;
   }
 
-  .feature p {
+  .feature p,
+  .decision p {
     margin: 0;
     color: var(--text-muted);
     font-size: 0.95rem;
@@ -402,12 +449,15 @@ const steps = {
   }
 
   @media (max-width: 720px) {
-    .features {
+    .features,
+    .decisions {
       grid-template-columns: 1fr;
     }
 
     .feature,
-    .feature:nth-child(even) {
+    .feature:nth-child(even),
+    .decision,
+    .decision:nth-child(even) {
       padding-left: 0;
       padding-right: 0;
     }

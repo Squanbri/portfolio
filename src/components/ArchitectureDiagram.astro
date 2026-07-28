@@ -1,0 +1,113 @@
+---
+interface Props {
+  title?: string;
+}
+
+const { title = 'Схема архитектуры' } = Astro.props;
+---
+
+<figure class="diagram">
+  <svg
+    viewBox="0 0 960 300"
+    role="img"
+    aria-label={title}
+  >
+    <defs>
+      <marker
+        id="arrow"
+        viewBox="0 0 10 10"
+        refX="9"
+        refY="5"
+        markerWidth="7"
+        markerHeight="7"
+        orient="auto-start-reverse"
+      >
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"></path>
+      </marker>
+    </defs>
+
+    <!-- edges -->
+    <g class="edges" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#arrow)">
+      <path d="M150 70 H198"></path>
+      <path d="M330 70 H378"></path>
+      <path d="M330 110 V148"></path>
+      <path d="M530 70 H578"></path>
+      <path d="M730 70 H778"></path>
+      <path d="M670 110 V148"></path>
+    </g>
+
+    <!-- nodes -->
+    <g class="node" transform="translate(40 40)">
+      <rect width="110" height="60" rx="8"></rect>
+      <text x="55" y="35" text-anchor="middle">Electron</text>
+    </g>
+
+    <g class="node" transform="translate(210 40)">
+      <rect width="120" height="60" rx="8"></rect>
+      <text x="60" y="35" text-anchor="middle">NestJS API</text>
+    </g>
+
+    <g class="node" transform="translate(390 40)">
+      <rect width="140" height="60" rx="8"></rect>
+      <text x="70" y="35" text-anchor="middle">Redis + BullMQ</text>
+    </g>
+
+    <g class="node" transform="translate(590 40)">
+      <rect width="140" height="60" rx="8"></rect>
+      <text x="70" y="28" text-anchor="middle">Sync / AI</text>
+      <text x="70" y="46" text-anchor="middle">Worker</text>
+    </g>
+
+    <g class="node" transform="translate(790 40)">
+      <rect width="130" height="60" rx="8"></rect>
+      <text x="65" y="35" text-anchor="middle">IMAP / SMTP</text>
+    </g>
+
+    <g class="node" transform="translate(210 160)">
+      <rect width="120" height="60" rx="8"></rect>
+      <text x="60" y="35" text-anchor="middle">PostgreSQL</text>
+    </g>
+
+    <g class="node" transform="translate(595 160)">
+      <rect width="130" height="60" rx="8"></rect>
+      <text x="65" y="35" text-anchor="middle">Ollama</text>
+    </g>
+  </svg>
+
+  <figcaption class="sr-only">
+    Electron подключается к NestJS API. API пишет в Redis + BullMQ и PostgreSQL. Очередь
+    запускает Sync / AI Worker, который работает с IMAP / SMTP и Ollama.
+  </figcaption>
+</figure>
+
+<style>
+  .diagram {
+    margin: 0;
+    padding: 1rem 0.5rem;
+    overflow-x: auto;
+  }
+
+  svg {
+    display: block;
+    width: 100%;
+    min-width: 640px;
+    height: auto;
+    color: var(--accent);
+  }
+
+  .node rect {
+    fill: var(--bg-elevated);
+    stroke: var(--border);
+    stroke-width: 1.5;
+  }
+
+  .node text {
+    fill: var(--text);
+    font-family: var(--font-mono);
+    font-size: 13px;
+  }
+
+  .edges {
+    opacity: 0.85;
+  }
+</style>

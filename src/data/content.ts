@@ -114,7 +114,9 @@ export type ArchitectureNode = {
 };
 
 export type ProjectArchitecture = {
-  nodes: ArchitectureNode[];
+  /** Built-in static diagram id */
+  diagram?: 'letter-box';
+  nodes?: ArchitectureNode[];
   targets?: string[];
 };
 
@@ -123,6 +125,8 @@ export type Project = {
   title: string;
   summary: string;
   description: string;
+  paragraphs?: string[];
+  decisions?: ProjectFeature[];
   eyebrow?: string;
   stack: string[];
   links: { label: string; href: string }[];
@@ -143,17 +147,47 @@ export const projects: Project[] = [
     title: 'Letter Box',
     eyebrow: 'Personal project · Full-stack · macOS',
     summary:
-      'Self-hosted почтовый клиент для macOS с фоновой синхронизацией и локальной AI-классификацией писем.',
+      'Self-hosted почтовый клиент для macOS: несколько аккаунтов, фоновая синхронизация и локальные AI-теги без облачных LLM.',
     description:
-      'Объединяет несколько почтовых аккаунтов, синхронизирует письма через IMAP и обрабатывает их локальной моделью без передачи данных внешним AI-сервисам. Сервер продолжает работать, даже когда desktop-приложение закрыто.',
+      'Клиент-серверное приложение, в котором desktop на Electron общается с NestJS backend по REST и Socket.IO. Сервер — единственный владелец IMAP-соединений, credentials и данных.',
+    paragraphs: [
+      'Letter Box собирает Mail.ru, Яндекс и Gmail в одном интерфейсе. Письма синхронизируются по IMAP, хранятся в PostgreSQL, а непрочитанные опционально размечаются локальной моделью через Ollama — без отправки содержимого внешним AI-сервисам.',
+      'Синхронизация и обработка живут на сервере: очередь BullMQ + Redis продолжает работать, даже когда desktop-приложение закрыто. Credentials шифруются на сервере, доступ — через JWT с ротацией refresh-токенов.',
+      'В UI — единый inbox, вкладки аккаунтов, фильтры по AI-тегам, дашборд с непрочитанными, спамом и динамикой, а также отправка, ответ и пересылка через SMTP.',
+    ],
+    decisions: [
+      {
+        title: 'Сервер владеет почтой',
+        text: 'IMAP/SMTP и хранение вынесены из Electron в NestJS. Клиент не держит долгие соединения и не хранит пароли приложений локально.',
+      },
+      {
+        title: 'Очередь вместо «синк в UI»',
+        text: 'Фоновый worker обновляет папки и запускает AI-разметку независимо от жизни окна приложения.',
+      },
+      {
+        title: 'Локальный AI по желанию',
+        text: 'Ollama подключается опционально. Если модели нет, клиент остаётся полноценным почтовым клиентом без тегов.',
+      },
+      {
+        title: 'Общие контракты',
+        text: 'DTO и события вынесены в пакет `@letter-box/contracts`, чтобы desktop и server говорили на одном языке.',
+      },
+    ],
     stack: [
+      'TypeScript',
       'Electron',
       'React',
+      'Vite',
+      'Mantine',
+      'TanStack Query',
       'NestJS',
+      'Prisma',
       'PostgreSQL',
       'Redis',
       'BullMQ',
       'Socket.IO',
+      'imapflow',
+      'nodemailer',
       'Ollama',
       'Docker',
     ],
@@ -163,41 +197,59 @@ export const projects: Project[] = [
         href: 'https://github.com/Squanbri/letter-box',
       },
     ],
-    // Replace files in public/images/letter-box/ with real screenshots (webp/png/jpg).
     screenshots: [
-      { src: '/images/letter-box/01.svg', alt: 'Главный экран Letter Box' },
-      { src: '/images/letter-box/02.svg', alt: 'Просмотр письма в Letter Box' },
-      { src: '/images/letter-box/03.svg', alt: 'Статистика и AI-теги Letter Box' },
+      {
+        src: '/images/letter-box/01-overview.webp',
+        alt: 'Обзор: статистика, активность и AI-теги',
+      },
+      {
+        src: '/images/letter-box/02-accounts.webp',
+        alt: 'Аккаунты, AI-сводка и настройки синхронизации',
+      },
+      {
+        src: '/images/letter-box/03-inbox.webp',
+        alt: 'Входящие с просмотром письма',
+      },
+      {
+        src: '/images/letter-box/04-compose.webp',
+        alt: 'Создание нового письма',
+      },
+      {
+        src: '/images/letter-box/05-important.webp',
+        alt: 'Важные письма по всем аккаунтам',
+      },
     ],
     features: [
       {
         title: 'Несколько аккаунтов',
-        text: 'Mail.ru, Яндекс и Gmail в одном приложении.',
+        text: 'Mail.ru, Яндекс и Gmail в одном окне: вкладки, единый inbox и фильтры по непрочитанным и AI-тегам.',
       },
       {
         title: 'Фоновая синхронизация',
-        text: 'Почта обновляется независимо от desktop-клиента.',
+        text: 'BullMQ + Redis обновляют папки на сервере, даже если desktop закрыт.',
       },
       {
-        title: 'IMAP и SMTP',
-        text: 'Получение, отправка, ответы и пересылка писем.',
+        title: 'Полный почтовый цикл',
+        text: 'Получение по IMAP, отправка/ответ/пересылка по SMTP, флаги, архив, перемещение и удаление.',
       },
       {
         title: 'Локальный AI',
-        text: 'Ollama размечает письма без внешних AI API.',
+        text: 'Ollama размечает непрочитанные письма локально — без облачных AI API.',
+      },
+      {
+        title: 'Дашборд',
+        text: 'Непрочитанные, важные, активность по дням, распределение по аккаунтам и тегам.',
+      },
+      {
+        title: 'Self-hosted',
+        text: 'PostgreSQL, Redis и worker поднимаются через Docker; данные остаются у вас.',
       },
     ],
     architecture: {
-      nodes: [
-        { label: 'Desktop', title: 'Electron + React' },
-        { label: 'Backend', title: 'NestJS API' },
-        { label: 'Queue', title: 'Redis + BullMQ' },
-        { label: 'Processing', title: 'Sync / AI Worker' },
-      ],
-      targets: ['PostgreSQL', 'IMAP / SMTP', 'Ollama'],
+      diagram: 'letter-box',
     },
     architectureNote:
-      'Сервер продолжает синхронизировать и обрабатывать письма, даже когда desktop-приложение закрыто.',
+      'Electron + React ходит в NestJS по REST и Socket.IO. API пишет в PostgreSQL и ставит задачи в Redis/BullMQ; worker синхронизирует почту по IMAP/SMTP и при необходимости вызывает Ollama.',
     cta: {
       eyebrow: 'Open source',
       title: 'Исходный код на GitHub',

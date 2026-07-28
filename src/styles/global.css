@@ -173,3 +173,93 @@ a:hover {
   white-space: nowrap;
   border: 0;
 }
+
+.lightbox {
+  width: min(96vw, 1280px);
+  max-width: 96vw;
+  max-height: 94vh;
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-elevated);
+  color: var(--text);
+  overflow: auto;
+}
+
+.lightbox::backdrop {
+  background: rgba(10, 14, 12, 0.75);
+  backdrop-filter: blur(4px);
+}
+
+.lightbox-panel {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2.75rem 0.85rem 1.1rem;
+}
+
+.lightbox-figure {
+  margin: 0;
+  min-width: 0;
+  text-align: center;
+}
+
+.lightbox-figure img {
+  display: inline-block;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  max-height: min(80vh, 920px);
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.lightbox-figure figcaption {
+  margin-top: 0.75rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.lightbox-close,
+.lightbox-nav {
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  border-radius: 8px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.65rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  z-index: 2;
+}
+
+.lightbox-nav {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.lightbox-close:hover,
+.lightbox-nav:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+@media (max-width: 640px) {
+  .lightbox-panel {
+    grid-template-columns: 1fr;
+    padding-top: 3rem;
+  }
+
+  .lightbox-nav {
+    display: none;
+  }
+}
