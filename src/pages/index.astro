@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import AmbientBackground from '../components/AmbientBackground.astro';
 import Hero from '../components/Hero.astro';
 import About from '../components/About.astro';
 import Experience from '../components/Experience.astro';
@@ -8,9 +9,47 @@ import Projects from '../components/Projects.astro';
 ---
 
 <BaseLayout>
-  <Hero />
-  <About />
-  <Experience />
-  <Tech />
-  <Projects />
+  <AmbientBackground />
+  <div class="page-content">
+    <Hero />
+    <About />
+    <Experience />
+    <Tech />
+    <Projects />
+  </div>
 </BaseLayout>
+
+<style>
+  .page-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Soft column wash so text stays readable over moving shapes */
+  .page-content::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: min(1200px, 100%);
+    transform: translateX(-50%);
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      color-mix(in srgb, var(--bg) 55%, transparent) 10%,
+      color-mix(in srgb, var(--bg) 82%, transparent) 28%,
+      color-mix(in srgb, var(--bg) 90%, transparent) 50%,
+      color-mix(in srgb, var(--bg) 82%, transparent) 72%,
+      color-mix(in srgb, var(--bg) 55%, transparent) 90%,
+      transparent 100%
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page-content > :global(*) {
+    position: relative;
+    z-index: 1;
+  }
+</style>
