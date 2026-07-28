@@ -103,25 +103,49 @@ export const techGroups = [
   },
 ];
 
+export type ProjectFeature = {
+  title: string;
+  text: string;
+};
+
+export type ArchitectureNode = {
+  label: string;
+  title: string;
+};
+
+export type ProjectArchitecture = {
+  nodes: ArchitectureNode[];
+  targets?: string[];
+};
+
 export type Project = {
   slug: string;
   title: string;
   summary: string;
   description: string;
+  eyebrow?: string;
   stack: string[];
   links: { label: string; href: string }[];
   screenshots: { src: string; alt: string }[];
+  features?: ProjectFeature[];
+  architecture?: ProjectArchitecture;
   architectureNote: string;
+  cta?: {
+    eyebrow: string;
+    title: string;
+    label: string;
+  };
 };
 
 export const projects: Project[] = [
   {
     slug: 'letter-box',
     title: 'Letter Box',
+    eyebrow: 'Personal project · Full-stack · macOS',
     summary:
       'Self-hosted почтовый клиент для macOS с фоновой синхронизацией и локальной AI-классификацией писем.',
     description:
-      'Объединяет несколько почтовых аккаунтов, синхронизирует письма через IMAP и обрабатывает их локальной моделью без передачи данных внешним AI-сервисам.',
+      'Объединяет несколько почтовых аккаунтов, синхронизирует письма через IMAP и обрабатывает их локальной моделью без передачи данных внешним AI-сервисам. Сервер продолжает работать, даже когда desktop-приложение закрыто.',
     stack: [
       'Electron',
       'React',
@@ -139,13 +163,46 @@ export const projects: Project[] = [
         href: 'https://github.com/Squanbri/letter-box',
       },
     ],
+    // Replace files in public/images/letter-box/ with real screenshots (webp/png/jpg).
     screenshots: [
-      { src: '/images/placeholder-1.svg', alt: 'Главный экран Letter Box' },
-      { src: '/images/placeholder-2.svg', alt: 'Просмотр письма в Letter Box' },
-      { src: '/images/placeholder-3.svg', alt: 'Статистика и AI-теги Letter Box' },
+      { src: '/images/letter-box/01.svg', alt: 'Главный экран Letter Box' },
+      { src: '/images/letter-box/02.svg', alt: 'Просмотр письма в Letter Box' },
+      { src: '/images/letter-box/03.svg', alt: 'Статистика и AI-теги Letter Box' },
     ],
+    features: [
+      {
+        title: 'Несколько аккаунтов',
+        text: 'Mail.ru, Яндекс и Gmail в одном приложении.',
+      },
+      {
+        title: 'Фоновая синхронизация',
+        text: 'Почта обновляется независимо от desktop-клиента.',
+      },
+      {
+        title: 'IMAP и SMTP',
+        text: 'Получение, отправка, ответы и пересылка писем.',
+      },
+      {
+        title: 'Локальный AI',
+        text: 'Ollama размечает письма без внешних AI API.',
+      },
+    ],
+    architecture: {
+      nodes: [
+        { label: 'Desktop', title: 'Electron + React' },
+        { label: 'Backend', title: 'NestJS API' },
+        { label: 'Queue', title: 'Redis + BullMQ' },
+        { label: 'Processing', title: 'Sync / AI Worker' },
+      ],
+      targets: ['PostgreSQL', 'IMAP / SMTP', 'Ollama'],
+    },
     architectureNote:
       'Сервер продолжает синхронизировать и обрабатывать письма, даже когда desktop-приложение закрыто.',
+    cta: {
+      eyebrow: 'Open source',
+      title: 'Исходный код на GitHub',
+      label: 'Открыть репозиторий',
+    },
   },
   {
     slug: 'project-one',
