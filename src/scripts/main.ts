@@ -267,34 +267,172 @@ function initSliders() {
   });
 }
 
-function initTypewriter() {
-  const target = document.querySelector<HTMLElement>('[data-typewriter]');
-  const cursor = document.querySelector<HTMLElement>('[data-cursor]');
-  const output = document.querySelector<HTMLElement>('[data-type-output]');
-  if (!target) return;
+type TerminalTone = 'cmd' | 'ok' | 'err' | 'warn' | 'muted' | 'dim' | 'plain';
 
-  const full = target.textContent ?? '';
-  target.textContent = '';
-  let i = 0;
+type TerminalStep =
+  | { kind: 'type'; text: string; delay?: number }
+  | { kind: 'line'; text: string; tone?: TerminalTone; delay?: number }
+  | { kind: 'progress'; label: string; delay?: number }
+  | { kind: 'pause'; delay: number };
 
-  const tick = () => {
-    if (i <= full.length) {
-      target.textContent = full.slice(0, i);
-      i += 1;
-      window.setTimeout(tick, 70);
-      return;
-    }
+const terminalScript: TerminalStep[] = [
+  { kind: 'type', text: 'npm install', delay: 280 },
+  { kind: 'line', text: 'npm warn deprecated inflight@1.0.6', tone: 'warn', delay: 120 },
+  { kind: 'line', text: 'npm warn deprecated rimraf@3.0.2', tone: 'warn', delay: 100 },
+  { kind: 'progress', label: 'fetching packages', delay: 60 },
+  { kind: 'line', text: 'added 247 packages in 3.8s', tone: 'ok', delay: 180 },
+  { kind: 'line', text: '24 packages are looking for funding', tone: 'muted', delay: 90 },
+  { kind: 'pause', delay: 220 },
+  { kind: 'type', text: 'npm run build', delay: 200 },
+  { kind: 'line', text: '> portfolio@1.0.0 build', tone: 'dim', delay: 80 },
+  { kind: 'line', text: '> astro build', tone: 'dim', delay: 70 },
+  { kind: 'line', text: '✓ 38 modules transformed.', tone: 'ok', delay: 140 },
+  { kind: 'line', text: 'dist/index.html                   12.4 kB', tone: 'muted', delay: 70 },
+  { kind: 'line', text: 'dist/assets/index-a3f2.css         8.1 kB', tone: 'muted', delay: 70 },
+  { kind: 'line', text: '✓ built in 1.84s', tone: 'ok', delay: 200 },
+  { kind: 'pause', delay: 240 },
+  { kind: 'type', text: 'npm run test', delay: 180 },
+  { kind: 'line', text: ' FAIL  src/utils/format.spec.ts', tone: 'err', delay: 140 },
+  { kind: 'line', text: '  Expected: "5y 10m"', tone: 'err', delay: 90 },
+  { kind: 'line', text: '  Received: "5 years"', tone: 'err', delay: 90 },
+  { kind: 'line', text: 'Tests: 1 failed, 11 passed', tone: 'warn', delay: 180 },
+  { kind: 'pause', delay: 260 },
+  { kind: 'type', text: 'git push origin main', delay: 200 },
+  { kind: 'line', text: 'error: failed to push some refs', tone: 'err', delay: 160 },
+  { kind: 'line', text: 'hint: Updates were rejected (non-fast-forward)', tone: 'muted', delay: 120 },
+  { kind: 'pause', delay: 240 },
+  { kind: 'type', text: 'npm run deploy', delay: 180 },
+  { kind: 'line', text: '▲ Deploying to production…', tone: 'dim', delay: 120 },
+  { kind: 'progress', label: 'uploading', delay: 50 },
+  { kind: 'line', text: '✓ Deployment complete', tone: 'ok', delay: 160 },
+  { kind: 'line', text: 'https://markitan.dev', tone: 'ok', delay: 320 },
+  { kind: 'pause', delay: 900 },
+];
 
-    cursor?.classList.add('is-done');
-    if (output) {
-      output.hidden = false;
+function sleep(ms: number) {
+  return new Promise<void>((resolve) => {
+    window.setTimeout(resolve, ms);
+  });
+}
+
+function createLine(html: string) {
+  const line = document.createElement('p');
+  line.className = 'line';
+  line.innerHTML = html;
+  return line;
+}
+
+function toneClass(tone: TerminalTone = 'plain') {
+  return tone === 'plain' ? '' : tone;
+}
+
+async function typeCommand(
+  root: HTMLElement,
+  text: string,
+  reducedMotion: boolean,
+) {
+  const line = createLine(`<span class="prompt">$</span> <span class="cmd"></span>`);
+  const cmd = line.querySelector('.cmd')!;
+  const cursor = document.createElement('span');
+  cursor.className = 'cursor';
+  line.appendChild(cursor);
+  root.appendChild(line);
+  root.scrollTop = root.scrollHeight;
+
+  if (reducedMotion) {
+    cmd.textContent = text;
+    cursor.remove();
+    return;
+  }
+
+  for (let i = 1; i <= text.length; i += 1) {
+    cmd.textContent = text.slice(0, i);
+    root.scrollTop = root.scrollHeight;
+    await sleep(28 + Math.random() * 42);
+  }
+
+  cursor.remove();
+}
+
+async function appendProgress(
+  root: HTMLElement,
+  label: string,
+  reducedMotion: boolean,
+) {
+  const line = createLine(`<span class="dim">${label}</span> <span class="ok"></span>`);
+  const bar = line.querySelector('.ok')!;
+  root.appendChild(line);
+
+  if (reducedMotion) {
+    bar.textContent = '[██████████] 100%';
+    return;
+  }
+
+  const frames = [
+    '[█·········] 12%',
+    '[███·······] 28%',
+    '[█████·····] 51%',
+    '[███████···] 74%',
+    '[█████████·] 91%',
+    '[██████████] 100%',
+  ];
+
+  for (const frame of frames) {
+    bar.textContent = frame;
+    root.scrollTop = root.scrollHeight;
+    await sleep(110 + Math.random() * 80);
+  }
+}
+
+async function initTerminal() {
+  const root = document.querySelector<HTMLElement>('[data-terminal-log]');
+  if (!root) return;
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const maxLines = 14;
+
+  const trim = () => {
+    while (root.children.length > maxLines) {
+      root.firstElementChild?.remove();
     }
   };
 
-  window.setTimeout(tick, 400);
+  const runCycle = async () => {
+    for (const step of terminalScript) {
+      if (step.kind === 'pause') {
+        await sleep(reducedMotion ? Math.min(step.delay, 120) : step.delay);
+        continue;
+      }
+
+      if (step.kind === 'type') {
+        await typeCommand(root, step.text, reducedMotion);
+        trim();
+        await sleep(reducedMotion ? 40 : (step.delay ?? 160));
+        continue;
+      }
+
+      if (step.kind === 'progress') {
+        await appendProgress(root, step.label, reducedMotion);
+        trim();
+        await sleep(reducedMotion ? 40 : (step.delay ?? 80));
+        continue;
+      }
+
+      const cls = toneClass(step.tone);
+      root.appendChild(createLine(cls ? `<span class="${cls}">${step.text}</span>` : step.text));
+      trim();
+      root.scrollTop = root.scrollHeight;
+      await sleep(reducedMotion ? 30 : (step.delay ?? 140));
+    }
+  };
+
+  // Keep looping so the terminal never feels empty.
+  for (;;) {
+    await runCycle();
+  }
 }
 
 initThemeToggle();
 initMobileMenu();
 initSliders();
-initTypewriter();
+void initTerminal();

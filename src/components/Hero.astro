@@ -1,15 +1,27 @@
 ---
 import { site } from '../data/content';
-import AmbientBackground from './AmbientBackground.astro';
 ---
 
 <section class="hero section">
-  <AmbientBackground />
-
   <div class="container hero-grid">
     <div class="hero-copy">
-      <p class="eyebrow mono">{site.role}</p>
-      <h1>{site.name}</h1>
+      <div class="identity">
+        <figure class="portrait">
+          <img
+            src={site.photo}
+            alt={`Фото: ${site.name}`}
+            width="480"
+            height="480"
+            loading="eager"
+            decoding="async"
+          />
+        </figure>
+        <div class="identity-text">
+          <p class="eyebrow mono">{site.role}</p>
+          <h1>{site.name}</h1>
+        </div>
+      </div>
+
       <p class="lead">
         React и TypeScript · веб и мобильные приложения · 5+ лет опыта.
         Открыт к предложениям: удалённо или гибрид, Тверь / Москва / Россия.
@@ -21,31 +33,14 @@ import AmbientBackground from './AmbientBackground.astro';
     </div>
 
     <div class="hero-visual">
-      <figure class="portrait">
-        <img
-          src={site.photo}
-          alt={`Фото: ${site.name}`}
-          width="480"
-          height="480"
-          loading="eager"
-          decoding="async"
-        />
-      </figure>
-
       <div class="terminal" aria-hidden="true">
         <div class="terminal-bar">
           <span class="dot red"></span>
           <span class="dot yellow"></span>
           <span class="dot green"></span>
-          <span class="terminal-title mono">~/portfolio</span>
+          <span class="terminal-title mono">zsh — portfolio</span>
         </div>
-        <div class="terminal-body mono">
-          <p>
-            <span class="prompt">$</span>
-            <span data-typewriter>whoami</span><span class="cursor" data-cursor></span>
-          </p>
-          <p class="output" data-type-output hidden>evgeniy_markitan · frontend</p>
-        </div>
+        <div class="terminal-body mono" data-terminal-log></div>
       </div>
     </div>
   </div>
@@ -55,29 +50,58 @@ import AmbientBackground from './AmbientBackground.astro';
   .hero {
     position: relative;
     isolation: isolate;
-    padding-top: clamp(2.5rem, 6vw, 4rem);
-    overflow: hidden;
+    padding-top: clamp(2rem, 5vw, 3.25rem);
+    padding-bottom: clamp(2.5rem, 6vw, 4rem);
   }
 
   .hero-grid {
     position: relative;
     z-index: 1;
     display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    gap: clamp(1.5rem, 4vw, 3rem);
+    grid-template-columns: 1fr minmax(280px, 0.95fr);
+    gap: clamp(1.75rem, 4vw, 3.25rem);
     align-items: center;
   }
 
+  .identity {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    margin-bottom: 1.15rem;
+  }
+
+  .portrait {
+    margin: 0;
+    flex: 0 0 auto;
+    width: clamp(84px, 12vw, 112px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid color-mix(in srgb, var(--accent) 35%, var(--border));
+    background: var(--bg-elevated);
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+
+  .portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .identity-text {
+    min-width: 0;
+  }
+
   .eyebrow {
-    margin: 0 0 0.6rem;
+    margin: 0 0 0.35rem;
     color: var(--accent);
     font-size: 0.85rem;
   }
 
   h1 {
-    margin: 0 0 0.85rem;
-    font-size: clamp(2.1rem, 5vw, 3rem);
-    line-height: 1.15;
+    margin: 0;
+    font-size: clamp(1.85rem, 4.4vw, 2.75rem);
+    line-height: 1.12;
     letter-spacing: -0.03em;
     font-weight: 700;
   }
@@ -86,7 +110,7 @@ import AmbientBackground from './AmbientBackground.astro';
     margin: 0 0 1.5rem;
     color: var(--text-muted);
     max-width: 34rem;
-    font-size: 1.1rem;
+    font-size: 1.08rem;
   }
 
   .hero-cta {
@@ -96,35 +120,18 @@ import AmbientBackground from './AmbientBackground.astro';
   }
 
   .hero-visual {
-    display: grid;
-    gap: 1rem;
-    justify-items: end;
-  }
-
-  .portrait {
-    margin: 0;
-    width: min(100%, 280px);
-    aspect-ratio: 1;
-    border-radius: 18px;
-    overflow: hidden;
-    border: 1px solid var(--border);
-    background: var(--bg-elevated);
-    box-shadow: var(--shadow);
-  }
-
-  .portrait img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    min-width: 0;
   }
 
   .terminal {
-    width: min(100%, 340px);
+    width: 100%;
     background: var(--terminal-bg);
-    border-radius: 10px;
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: var(--shadow);
-    border: 1px solid color-mix(in srgb, var(--border) 60%, #000);
+    box-shadow:
+      0 18px 40px color-mix(in srgb, #000 18%, transparent),
+      0 0 0 1px color-mix(in srgb, var(--border) 50%, #000);
+    transform: rotate(-0.6deg);
   }
 
   .terminal-bar {
@@ -160,38 +167,57 @@ import AmbientBackground from './AmbientBackground.astro';
   }
 
   .terminal-body {
-    padding: 1rem 1.1rem 1.25rem;
+    padding: 0.9rem 1rem 1.1rem;
     color: var(--terminal-text);
-    min-height: 6.5rem;
-    font-size: 0.9rem;
+    height: 18rem;
+    overflow: hidden;
+    font-size: 0.78rem;
+    line-height: 1.45;
   }
 
-  .terminal-body p {
-    margin: 0 0 0.55rem;
+  .terminal-body :global(.line) {
+    margin: 0 0 0.28rem;
+    white-space: pre-wrap;
+    word-break: break-word;
   }
 
-  .prompt {
+  .terminal-body :global(.prompt) {
     color: var(--cursor);
-    margin-right: 0.45rem;
+    margin-right: 0.4rem;
   }
 
-  .output {
+  .terminal-body :global(.cmd) {
+    color: #e8f5ec;
+  }
+
+  .terminal-body :global(.ok) {
+    color: #5ecf8a;
+  }
+
+  .terminal-body :global(.warn) {
+    color: #e6c35c;
+  }
+
+  .terminal-body :global(.err) {
+    color: #ff7b72;
+  }
+
+  .terminal-body :global(.muted) {
     color: var(--terminal-muted);
   }
 
-  .cursor {
+  .terminal-body :global(.dim) {
+    color: color-mix(in srgb, var(--terminal-muted) 75%, #fff);
+  }
+
+  .terminal-body :global(.cursor) {
     display: inline-block;
     width: 0.55ch;
-    height: 1.1em;
+    height: 1.05em;
     margin-left: 1px;
     vertical-align: text-bottom;
     background: var(--cursor);
     animation: blink 1s steps(1) infinite;
-  }
-
-  .cursor.is-done {
-    animation: none;
-    opacity: 0;
   }
 
   @keyframes blink {
@@ -200,35 +226,32 @@ import AmbientBackground from './AmbientBackground.astro';
     }
   }
 
-  @media (max-width: 800px) {
+  @media (max-width: 860px) {
     .hero-grid {
       grid-template-columns: 1fr;
     }
 
-    .hero-visual {
-      justify-items: start;
-      grid-template-columns: auto 1fr;
-      align-items: end;
-      gap: 0.85rem;
-    }
-
-    .portrait {
-      width: 132px;
-      border-radius: 14px;
-    }
-
     .terminal {
-      width: 100%;
+      transform: none;
+    }
+
+    .terminal-body {
+      height: 15rem;
     }
   }
 
   @media (max-width: 520px) {
-    .hero-visual {
-      grid-template-columns: 1fr;
+    .identity {
+      gap: 0.85rem;
     }
 
     .portrait {
-      width: min(100%, 200px);
+      width: 76px;
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 10%, transparent);
+    }
+
+    h1 {
+      font-size: clamp(1.65rem, 8vw, 2rem);
     }
   }
 </style>
