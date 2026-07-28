@@ -114,6 +114,38 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    slug: 'letter-box',
+    title: 'Letter Box',
+    summary:
+      'Self-hosted почтовый клиент для macOS с фоновой синхронизацией и локальной AI-классификацией писем.',
+    description:
+      'Объединяет несколько почтовых аккаунтов, синхронизирует письма через IMAP и обрабатывает их локальной моделью без передачи данных внешним AI-сервисам.',
+    stack: [
+      'Electron',
+      'React',
+      'NestJS',
+      'PostgreSQL',
+      'Redis',
+      'BullMQ',
+      'Socket.IO',
+      'Ollama',
+      'Docker',
+    ],
+    links: [
+      {
+        label: 'GitHub',
+        href: 'https://github.com/Squanbri/letter-box',
+      },
+    ],
+    screenshots: [
+      { src: '/images/placeholder-1.svg', alt: 'Главный экран Letter Box' },
+      { src: '/images/placeholder-2.svg', alt: 'Просмотр письма в Letter Box' },
+      { src: '/images/placeholder-3.svg', alt: 'Статистика и AI-теги Letter Box' },
+    ],
+    architectureNote:
+      'Сервер продолжает синхронизировать и обрабатывать письма, даже когда desktop-приложение закрыто.',
+  },
+  {
     slug: 'project-one',
     title: 'Проект One',
     summary: 'Короткое описание первого проекта. Что делает и зачем.',
