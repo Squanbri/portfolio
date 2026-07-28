@@ -7,13 +7,26 @@ interface Props {
 const { images, id } = Astro.props;
 ---
 
-<div class="slider" data-slider id={id}>
-  <div class="viewport">
+<div
+  class="slider"
+  data-slider
+  id={id}
+  data-images={JSON.stringify(images)}
+>
+  <div class="viewport" data-viewport title="Листайте или нажмите, чтобы открыть">
     <ul class="track" data-track>
       {
         images.map((image, index) => (
-          <li class="slide" data-slide={index === 0 ? 'active' : undefined}>
-            <img src={image.src} alt={image.alt} loading="lazy" width="960" height="540" />
+          <li class="slide">
+            <img
+              src={image.src}
+              alt={image.alt}
+              loading={index === 0 ? 'eager' : 'lazy'}
+              decoding="async"
+              draggable="false"
+              data-slide-image
+              data-index={index}
+            />
           </li>
         ))
       }
@@ -53,27 +66,49 @@ const { images, id } = Astro.props;
     overflow: hidden;
     border-radius: 8px;
     border: 1px solid var(--border);
-    background: var(--bg-elevated);
+    background: var(--bg);
+    touch-action: pan-y;
+    cursor: grab;
+    user-select: none;
+  }
+
+  .viewport.is-dragging {
+    cursor: grabbing;
   }
 
   .track {
     display: flex;
+    align-items: flex-start;
     margin: 0;
     padding: 0;
     list-style: none;
     transition: transform 0.3s ease;
+    will-change: transform;
+  }
+
+  .track.is-dragging {
+    transition: none;
   }
 
   .slide {
     flex: 0 0 100%;
     min-width: 100%;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
   }
 
   .slide img {
+    display: block;
     width: 100%;
-    aspect-ratio: 16 / 9;
-    object-fit: cover;
-    background: var(--accent-soft);
+    max-width: 100%;
+    height: auto;
+    max-height: none;
+    object-fit: contain;
+    object-position: center;
+    pointer-events: none;
   }
 
   .controls {
@@ -102,6 +137,8 @@ const { images, id } = Astro.props;
 
   .dots {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 0.4rem;
   }
 

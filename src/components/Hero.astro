@@ -1,8 +1,11 @@
 ---
 import { site } from '../data/content';
+import AmbientBackground from './AmbientBackground.astro';
 ---
 
 <section class="hero section">
+  <AmbientBackground />
+
   <div class="container hero-grid">
     <div class="hero-copy">
       <p class="eyebrow mono">{site.role}</p>
@@ -17,19 +20,32 @@ import { site } from '../data/content';
       </div>
     </div>
 
-    <div class="terminal" aria-hidden="true">
-      <div class="terminal-bar">
-        <span class="dot red"></span>
-        <span class="dot yellow"></span>
-        <span class="dot green"></span>
-        <span class="terminal-title mono">~/portfolio</span>
-      </div>
-      <div class="terminal-body mono">
-        <p>
-          <span class="prompt">$</span>
-          <span data-typewriter>whoami</span><span class="cursor" data-cursor></span>
-        </p>
-        <p class="output" data-type-output hidden>evgeniy_markitan · frontend</p>
+    <div class="hero-visual">
+      <figure class="portrait">
+        <img
+          src={site.photo}
+          alt={`Фото: ${site.name}`}
+          width="480"
+          height="480"
+          loading="eager"
+          decoding="async"
+        />
+      </figure>
+
+      <div class="terminal" aria-hidden="true">
+        <div class="terminal-bar">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+          <span class="terminal-title mono">~/portfolio</span>
+        </div>
+        <div class="terminal-body mono">
+          <p>
+            <span class="prompt">$</span>
+            <span data-typewriter>whoami</span><span class="cursor" data-cursor></span>
+          </p>
+          <p class="output" data-type-output hidden>evgeniy_markitan · frontend</p>
+        </div>
       </div>
     </div>
   </div>
@@ -37,12 +53,17 @@ import { site } from '../data/content';
 
 <style>
   .hero {
+    position: relative;
+    isolation: isolate;
     padding-top: clamp(2.5rem, 6vw, 4rem);
+    overflow: hidden;
   }
 
   .hero-grid {
+    position: relative;
+    z-index: 1;
     display: grid;
-    grid-template-columns: 1.15fr 0.85fr;
+    grid-template-columns: 1.1fr 0.9fr;
     gap: clamp(1.5rem, 4vw, 3rem);
     align-items: center;
   }
@@ -74,7 +95,31 @@ import { site } from '../data/content';
     gap: 0.65rem;
   }
 
+  .hero-visual {
+    display: grid;
+    gap: 1rem;
+    justify-items: end;
+  }
+
+  .portrait {
+    margin: 0;
+    width: min(100%, 280px);
+    aspect-ratio: 1;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    box-shadow: var(--shadow);
+  }
+
+  .portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
   .terminal {
+    width: min(100%, 340px);
     background: var(--terminal-bg);
     border-radius: 10px;
     overflow: hidden;
@@ -117,7 +162,7 @@ import { site } from '../data/content';
   .terminal-body {
     padding: 1rem 1.1rem 1.25rem;
     color: var(--terminal-text);
-    min-height: 7rem;
+    min-height: 6.5rem;
     font-size: 0.9rem;
   }
 
@@ -158,6 +203,32 @@ import { site } from '../data/content';
   @media (max-width: 800px) {
     .hero-grid {
       grid-template-columns: 1fr;
+    }
+
+    .hero-visual {
+      justify-items: start;
+      grid-template-columns: auto 1fr;
+      align-items: end;
+      gap: 0.85rem;
+    }
+
+    .portrait {
+      width: 132px;
+      border-radius: 14px;
+    }
+
+    .terminal {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .hero-visual {
+      grid-template-columns: 1fr;
+    }
+
+    .portrait {
+      width: min(100%, 200px);
     }
   }
 </style>

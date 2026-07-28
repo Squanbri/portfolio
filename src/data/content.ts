@@ -1,6 +1,8 @@
+/** Put your photo at public/images/avatar.jpg and set photo to '/images/avatar.jpg' */
 export const site = {
   name: 'Евгений Маркитан',
   role: 'Frontend-разработчик',
+  photo: '/images/avatar.svg',
   email: 'evgeniy-markitan@yandex.ru',
   phone: '+7 961 014-07-15',
   phoneHref: 'tel:+79610140715',
@@ -101,18 +103,159 @@ export const techGroups = [
   },
 ];
 
+export type ProjectFeature = {
+  title: string;
+  text: string;
+};
+
+export type ArchitectureNode = {
+  label: string;
+  title: string;
+};
+
+export type ProjectArchitecture = {
+  /** Built-in static diagram id */
+  diagram?: 'letter-box';
+  nodes?: ArchitectureNode[];
+  targets?: string[];
+};
+
 export type Project = {
   slug: string;
   title: string;
   summary: string;
   description: string;
+  paragraphs?: string[];
+  decisions?: ProjectFeature[];
+  eyebrow?: string;
   stack: string[];
   links: { label: string; href: string }[];
   screenshots: { src: string; alt: string }[];
+  features?: ProjectFeature[];
+  architecture?: ProjectArchitecture;
   architectureNote: string;
+  cta?: {
+    eyebrow: string;
+    title: string;
+    label: string;
+  };
 };
 
 export const projects: Project[] = [
+  {
+    slug: 'letter-box',
+    title: 'Letter Box',
+    eyebrow: 'Personal project · Full-stack · macOS',
+    summary:
+      'Self-hosted почтовый клиент для macOS: несколько аккаунтов, фоновая синхронизация и локальные AI-теги без облачных LLM.',
+    description:
+      'Клиент-серверное приложение, в котором desktop на Electron общается с NestJS backend по REST и Socket.IO. Сервер — единственный владелец IMAP-соединений, credentials и данных.',
+    paragraphs: [
+      'Letter Box собирает Mail.ru, Яндекс и Gmail в одном интерфейсе. Письма синхронизируются по IMAP, хранятся в PostgreSQL, а непрочитанные опционально размечаются локальной моделью через Ollama — без отправки содержимого внешним AI-сервисам.',
+      'Синхронизация и обработка живут на сервере: очередь BullMQ + Redis продолжает работать, даже когда desktop-приложение закрыто. Credentials шифруются на сервере, доступ — через JWT с ротацией refresh-токенов.',
+      'В UI — единый inbox, вкладки аккаунтов, фильтры по AI-тегам, дашборд с непрочитанными, спамом и динамикой, а также отправка, ответ и пересылка через SMTP.',
+    ],
+    decisions: [
+      {
+        title: 'Сервер владеет почтой',
+        text: 'IMAP/SMTP и хранение вынесены из Electron в NestJS. Клиент не держит долгие соединения и не хранит пароли приложений локально.',
+      },
+      {
+        title: 'Очередь вместо «синк в UI»',
+        text: 'Фоновый worker обновляет папки и запускает AI-разметку независимо от жизни окна приложения.',
+      },
+      {
+        title: 'Локальный AI по желанию',
+        text: 'Ollama подключается опционально. Если модели нет, клиент остаётся полноценным почтовым клиентом без тегов.',
+      },
+      {
+        title: 'Общие контракты',
+        text: 'DTO и события вынесены в пакет `@letter-box/contracts`, чтобы desktop и server говорили на одном языке.',
+      },
+    ],
+    stack: [
+      'TypeScript',
+      'Electron',
+      'React',
+      'Vite',
+      'Mantine',
+      'TanStack Query',
+      'NestJS',
+      'Prisma',
+      'PostgreSQL',
+      'Redis',
+      'BullMQ',
+      'Socket.IO',
+      'imapflow',
+      'nodemailer',
+      'Ollama',
+      'Docker',
+    ],
+    links: [
+      {
+        label: 'GitHub',
+        href: 'https://github.com/Squanbri/letter-box',
+      },
+    ],
+    screenshots: [
+      {
+        src: '/images/letter-box/01-overview.webp',
+        alt: 'Обзор: статистика, активность и AI-теги',
+      },
+      {
+        src: '/images/letter-box/02-accounts.webp',
+        alt: 'Аккаунты, AI-сводка и настройки синхронизации',
+      },
+      {
+        src: '/images/letter-box/03-inbox.webp',
+        alt: 'Входящие с просмотром письма',
+      },
+      {
+        src: '/images/letter-box/04-compose.webp',
+        alt: 'Создание нового письма',
+      },
+      {
+        src: '/images/letter-box/05-important.webp',
+        alt: 'Важные письма по всем аккаунтам',
+      },
+    ],
+    features: [
+      {
+        title: 'Несколько аккаунтов',
+        text: 'Mail.ru, Яндекс и Gmail в одном окне: вкладки, единый inbox и фильтры по непрочитанным и AI-тегам.',
+      },
+      {
+        title: 'Фоновая синхронизация',
+        text: 'BullMQ + Redis обновляют папки на сервере, даже если desktop закрыт.',
+      },
+      {
+        title: 'Полный почтовый цикл',
+        text: 'Получение по IMAP, отправка/ответ/пересылка по SMTP, флаги, архив, перемещение и удаление.',
+      },
+      {
+        title: 'Локальный AI',
+        text: 'Ollama размечает непрочитанные письма локально — без облачных AI API.',
+      },
+      {
+        title: 'Дашборд',
+        text: 'Непрочитанные, важные, активность по дням, распределение по аккаунтам и тегам.',
+      },
+      {
+        title: 'Self-hosted',
+        text: 'PostgreSQL, Redis и worker поднимаются через Docker; данные остаются у вас.',
+      },
+    ],
+    architecture: {
+      diagram: 'letter-box',
+    },
+    architectureNote:
+      'Electron + React ходит в NestJS по REST и Socket.IO. API пишет в PostgreSQL и ставит задачи в Redis/BullMQ; worker синхронизирует почту по IMAP/SMTP и при необходимости вызывает Ollama.',
+    cta: {
+      eyebrow: 'Open source',
+      title: 'Исходный код на GitHub',
+      label: 'Открыть репозиторий',
+    },
+  },
   {
     slug: 'project-one',
     title: 'Проект One',
