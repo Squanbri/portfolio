@@ -115,7 +115,7 @@ export type ArchitectureNode = {
 
 export type ProjectArchitecture = {
   /** Built-in static diagram id */
-  diagram?: 'letter-box';
+  diagram?: 'letter-box' | 'screen-translator';
   nodes?: ArchitectureNode[];
   targets?: string[];
 };
@@ -258,6 +258,114 @@ export const projects: Project[] = [
     },
     architectureNote:
       'Electron + React ходит в NestJS по REST и Socket.IO. API пишет в PostgreSQL и ставит задачи в Redis/BullMQ; worker синхронизирует почту по IMAP/SMTP и при необходимости вызывает Ollama.',
+    cta: {
+      eyebrow: 'Open source',
+      title: 'Исходный код на GitHub',
+      label: 'Открыть репозиторий',
+    },
+  },
+  {
+    slug: 'screen-translator',
+    title: 'Screen Translator',
+    eyebrow: 'Personal project · Desktop · macOS',
+    summary:
+      'Фоновый переводчик экрана для macOS: хоткей, OCR поверх любого приложения, перевод слова или фразы и личный словарь.',
+    description:
+      'Клиент-серверное приложение, которое по глобальному хоткею снимает экран, распознаёт текст и превращает найденные слова в интерактивный overlay.',
+    paragraphs: [
+      'Screen Translator помогает читать интерфейсы, документацию и статьи на английском, не переключаясь между окнами. После нажатия Cmd+Shift+X приложение делает снимок основного дисплея и показывает поверх него распознанные слова.',
+      'Можно нажать на отдельное слово или выделить область с фразой. Electron-клиент отправляет изображение в FastAPI: Tesseract возвращает текст вместе с координатами, а Argos Translate переводит его офлайн — без внешнего translation API.',
+      'Перевод можно скопировать или сохранить в личный словарь. Сервер разворачивается через Docker Compose, а macOS-клиент собирается в DMG с адресом API, заданным во время сборки.',
+    ],
+    decisions: [
+      {
+        title: 'Overlay вместо отдельного окна',
+        text: 'Распознанный текст остаётся на месте: координаты OCR превращаются в кликабельные области прямо поверх снимка экрана.',
+      },
+      {
+        title: 'Фоновое macOS-приложение',
+        text: 'Electron скрывается в menu bar, ждёт глобальный хоткей и не занимает место в Dock.',
+      },
+      {
+        title: 'Офлайн-перевод',
+        text: 'Argos Translate работает на собственном сервере, поэтому текст не отправляется во внешние сервисы перевода.',
+      },
+      {
+        title: 'Изолированный renderer',
+        text: 'Renderer получает только типизированный IPC API через preload; захват экрана и сетевые запросы остаются в main process.',
+      },
+    ],
+    stack: [
+      'TypeScript',
+      'Electron',
+      'React',
+      'electron-vite',
+      'FastAPI',
+      'Python',
+      'Tesseract OCR',
+      'Argos Translate',
+      'SQLite',
+      'Docker',
+    ],
+    links: [
+      {
+        label: 'GitHub',
+        href: 'https://github.com/Squanbri/screen-translator',
+      },
+    ],
+    screenshots: [
+      {
+        src: '/images/screen-translator/01-recognizing.png',
+        alt: 'OCR: сканирование экрана и распознавание текста',
+      },
+      {
+        src: '/images/screen-translator/02-overlay.png',
+        alt: 'Overlay с распознанными словами и bounding boxes',
+      },
+      {
+        src: '/images/screen-translator/03-word.png',
+        alt: 'Перевод отдельного слова поверх экрана',
+      },
+      {
+        src: '/images/screen-translator/04-phrase.png',
+        alt: 'Выделение и перевод фразы',
+      },
+      {
+        src: '/images/screen-translator/05-dictionary.png',
+        alt: 'Личный словарь сохранённых слов',
+      },
+    ],
+    features: [
+      {
+        title: 'Глобальный хоткей',
+        text: 'Cmd+Shift+X запускает перевод поверх текущего приложения.',
+      },
+      {
+        title: 'OCR с координатами',
+        text: 'Tesseract группирует текст по абзацам, строкам и словам и возвращает bounding boxes.',
+      },
+      {
+        title: 'Слово или фраза',
+        text: 'Клик переводит одно слово, а drag-selection собирает несколько слов в фразу.',
+      },
+      {
+        title: 'Быстрые действия',
+        text: 'Перевод можно скопировать или сразу добавить в личный словарь.',
+      },
+      {
+        title: 'Фоновая работа',
+        text: 'Приложение живёт в menu bar и открывает overlay только по запросу.',
+      },
+      {
+        title: 'Self-hosted API',
+        text: 'FastAPI-сервер с OCR, переводом и словарём поднимается одной командой через Docker Compose.',
+      },
+    ],
+    architecture: {
+      diagram: 'screen-translator',
+    },
+    architectureNote:
+      'Electron tray по хоткею снимает экран и открывает Overlay. Overlay шлёт image в FastAPI: Tesseract распознаёт текст с координатами, Argos Translate переводит офлайн, а сохранённые слова пишутся в SQLite. Overlay общается с Electron через IPC.',
     cta: {
       eyebrow: 'Open source',
       title: 'Исходный код на GitHub',

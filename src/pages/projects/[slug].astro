@@ -137,8 +137,11 @@ const steps = {
         {
           hasRichArchitecture ? (
             <div class="architecture">
-              {project.architecture?.diagram === 'letter-box' ? (
-                <ArchitectureDiagram title={`Схема архитектуры ${project.title}`} />
+              {project.architecture?.diagram ? (
+                <ArchitectureDiagram
+                  variant={project.architecture.diagram}
+                  title={`Схема архитектуры ${project.title}`}
+                />
               ) : (
                 <div
                   class="architecture-flow"
