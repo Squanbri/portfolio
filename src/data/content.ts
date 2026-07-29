@@ -211,20 +211,20 @@ export const projects: Project[] = [
         alt: 'Входящие с фильтрами по AI-тегам и просмотром письма',
       },
       {
-        src: '/images/letter-box/04-compose.png',
+        src: '/images/letter-box/04-inbox-email.png',
+        alt: 'Входящие: просмотр письма с вложением',
+      },
+      {
+        src: '/images/letter-box/05-compose.png',
         alt: 'Создание нового письма',
       },
       {
-        src: '/images/letter-box/05-important.png',
+        src: '/images/letter-box/06-important.png',
         alt: 'Важные письма по всем аккаунтам',
       },
       {
-        src: '/images/letter-box/06-overview-light.png',
+        src: '/images/letter-box/07-overview-light.png',
         alt: 'Обзор в светлой теме',
-      },
-      {
-        src: '/images/letter-box/07-inbox-email.png',
-        alt: 'Входящие: просмотр письма с вложением',
       },
     ],
     features: [
