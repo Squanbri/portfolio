@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900">
+<rect width="1440" height="900" fill="#07110b"/><rect x="40" y="40" width="1360" height="820" rx="18" fill="#102019" stroke="#315641"/>
+<rect x="40" y="40" width="1360" height="62" rx="18" fill="#06130b"/><path d="M40 102h1360" stroke="#52ff86" opacity=".45"/>
+<rect x="68" y="58" width="25" height="25" transform="rotate(45 80 70)" fill="none" stroke="#52ff86"/><text x="112" y="76" fill="#adffc5" font-family="monospace" font-size="16" letter-spacing="3">SCREEN TRANSLATOR</text>
+<text x="1170" y="76" fill="#71b985" font-family="monospace" font-size="12">● SYSTEM READY</text>
+<rect x="115" y="155" width="740" height="590" rx="10" fill="#e8eee9"/><rect x="155" y="205" width="390" height="26" rx="4" fill="#cad5cc"/>
+<text x="155" y="290" fill="#26342a" font-family="Arial" font-size="32" font-weight="700">Read anything on your screen</text>
+<text x="155" y="344" fill="#526158" font-family="Arial" font-size="21">Select a word to translate it instantly.</text>
+<rect x="151" y="314" width="67" height="42" fill="#52ff86" fill-opacity=".14" stroke="#29bf58"/><rect x="226" y="314" width="56" height="42" fill="#52ff86" fill-opacity=".14" stroke="#29bf58"/><rect x="290" y="314" width="51" height="42" fill="#52ff86" fill-opacity=".14" stroke="#29bf58"/>
+<rect x="890" y="250" width="390" height="255" rx="4" fill="#07130c" stroke="#52ff86" stroke-opacity=".45"/><rect x="890" y="250" width="390" height="45" fill="#0d2416"/>
+<text x="910" y="278" fill="#74bf89" font-family="monospace" font-size="12">TRANSLATION // EN → RU</text><text x="915" y="337" fill="#7fa18a" font-family="Arial" font-size="16">screen</text>
+<path d="M915 360h340" stroke="#315641"/><text x="915" y="409" fill="#eafff0" font-family="Arial" font-size="30">экран</text>
+<rect x="890" y="456" width="195" height="49" fill="#0d2416"/><rect x="1085" y="456" width="195" height="49" fill="#102b1a"/><text x="950" y="486" fill="#9ed9ae" font-family="monospace" font-size="11">COPY</text><text x="1132" y="486" fill="#52ff86" font-family="monospace" font-size="11">REMEMBER</text>
+<text x="70" y="833" fill="#66a779" font-family="monospace" font-size="12">CMD + SHIFT + X  ·  CLICK WORD  ·  DRAG TO SELECT</text></svg>
