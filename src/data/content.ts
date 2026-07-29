@@ -199,24 +199,28 @@ export const projects: Project[] = [
     ],
     screenshots: [
       {
-        src: '/images/letter-box/01-overview.webp',
-        alt: 'Обзор: статистика, активность и AI-теги',
+        src: '/images/letter-box/01-overview.png',
+        alt: 'Обзор: аккаунты, непрочитанные, активность и AI-теги',
       },
       {
-        src: '/images/letter-box/02-accounts.webp',
-        alt: 'Аккаунты, AI-сводка и настройки синхронизации',
+        src: '/images/letter-box/02-overview-bottom.png',
+        alt: 'Обзор: AI-теги по категориям, спам и сводка Ollama',
       },
       {
-        src: '/images/letter-box/03-inbox.webp',
-        alt: 'Входящие с просмотром письма',
+        src: '/images/letter-box/03-inbox.png',
+        alt: 'Входящие с фильтрами по AI-тегам и просмотром письма',
       },
       {
-        src: '/images/letter-box/04-compose.webp',
+        src: '/images/letter-box/04-compose.png',
         alt: 'Создание нового письма',
       },
       {
-        src: '/images/letter-box/05-important.webp',
+        src: '/images/letter-box/05-important.png',
         alt: 'Важные письма по всем аккаунтам',
+      },
+      {
+        src: '/images/letter-box/06-overview-light.png',
+        alt: 'Обзор в светлой теме',
       },
     ],
     features: [
