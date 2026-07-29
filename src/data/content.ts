@@ -209,25 +209,142 @@ export const projects: Project[] = [
     ],
     screenshots: [
       {
-        src: '/images/safari-portal/02-dashboard.png',
-        alt: 'Travel dashboard: action items, invoice и детали поездки',
-      },
-      {
-        src: '/images/safari-portal/01-planning.png',
-        alt: 'Lookbook и proposal-страницы для клиентов',
-      },
-      {
-        src: '/images/safari-portal/03-templates.png',
-        alt: 'Детальный день itinerary с активностями и локациями',
-      },
-      {
-        src: '/images/safari-portal/04-portfolio.png',
-        alt: 'Примеры branded itinerary и контентных страниц',
+        src: '/images/safari-portal/01-home.jpg',
+        alt: 'Главная Safari Portal: модули Task Manager, Content Library, Itineraries, Forms, Invoicing',
       },
     ],
     cta: {
       eyebrow: 'Product',
       title: 'Открыть Safari Portal',
+      label: 'Сайт продукта',
+    },
+  },
+  {
+    slug: 'leaderboard-golf',
+    kind: 'product',
+    title: 'Leaderboard Golf',
+    eyebrow: 'JetRockets · Mobile · Golf',
+    summary:
+      'Мобильное приложение для гольфа: live-скоринг, турниры, ставки, статистика и постинг в Handicap Index® через USGA.',
+    description:
+      'Кроссплатформенное golf-приложение для игроков и групп: создание матчей, live leaderboard, side games, GPS и социальный фид вокруг раундов.',
+    paragraphs: [
+      'Leaderboard — цифровой «дом» для игры: хостинг турниров до 100 игроков, live scoring и skins, side games (Match Play, Nassau, Wolf и др.), GPS и постинг раундов в Handicap Index® через интеграцию с USGA®.',
+      'Продукт развивается с командой JetRockets: React Native клиент, backend на Ruby on Rails, realtime-обновления счета и публикация в App Store / Google Play.',
+    ],
+    contributions: [
+      {
+        title: 'React Native клиент',
+        text: 'Разработка и развитие мобильного приложения — скоринг, турниры, группы и публикация в сторы.',
+      },
+      {
+        title: 'Нативные возможности',
+        text: 'Swift/Kotlin-модули для React Native: Dynamic Island, live-виджеты и background-задачи.',
+      },
+      {
+        title: 'CI/CD в сторы',
+        text: 'Пайплайны сборки и автоматической публикации iOS/Android-релизов.',
+      },
+      {
+        title: 'Англоязычная команда',
+        text: 'Работа с продуктовой командой и клиентом из США: фичи, фидбек и релизы.',
+      },
+    ],
+    stack: [
+      'React Native',
+      'TypeScript',
+      'JavaScript',
+      'Ruby on Rails',
+      'Ruby',
+      'Swift',
+      'Kotlin',
+      'CI/CD',
+      'App Store',
+      'Google Play',
+    ],
+    links: [
+      {
+        label: 'Сайт',
+        href: 'https://www.leaderboardgolf.co/',
+      },
+      {
+        label: 'Кейс JetRockets',
+        href: 'https://jetrockets.com/portfolio/leaderboard',
+      },
+    ],
+    screenshots: [
+      {
+        src: '/images/leaderboard-golf/01-home.jpg',
+        alt: 'Главная Leaderboard: hero с app mockups и Callaway Challenge',
+      },
+    ],
+    cta: {
+      eyebrow: 'Product',
+      title: 'Открыть Leaderboard Golf',
+      label: 'Сайт продукта',
+    },
+  },
+  {
+    slug: 'navigator-career',
+    kind: 'product',
+    title: 'Навигатор карьеры',
+    eyebrow: 'Сахалин · HRTech · Web',
+    summary:
+      'Региональная платформа для поиска работы, обучения и карьерного развития на Сахалине — для специалистов, студентов, школьников и компаний.',
+    description:
+      'Веб-портал АРЧК Сахалинской области: вакансии, анкеты, карьерные консультации, курсы, тестирование и личные кабинеты соискателей и работодателей.',
+    paragraphs: [
+      'Навигатор карьеры помогает жителям региона найти работу, пройти консультацию, построить карьерный план и пройти обучение. Для компаний — подбор специалистов, размещение вакансий, стажировок и корпоративных курсов.',
+      'Фронтенд на Next.js: отдельные сценарии для специалиста, студента и школьника, кабинет работодателя, поиск и контентные разделы. Данные и медиа отдаёт API back.navigator-career.ru.',
+    ],
+    contributions: [
+      {
+        title: 'Frontend на Next.js',
+        text: 'Интерфейсы портала: главная, кабинеты, поиск, разделы для соискателей и компаний.',
+      },
+      {
+        title: 'Сценарии аудиторий',
+        text: 'Разные пользовательские потоки — специалист, студент, школьник — и B2B-страница для работодателей.',
+      },
+      {
+        title: 'Интеграция с API',
+        text: 'Клиентская работа с backend API: вакансии, анкеты, курсы и контент.',
+      },
+    ],
+    stack: [
+      'Next.js',
+      'React',
+      'TypeScript',
+      'JavaScript',
+      'REST API',
+    ],
+    links: [
+      {
+        label: 'Сайт',
+        href: 'https://navigator-career.ru/',
+      },
+    ],
+    screenshots: [
+      {
+        src: '/images/navigator-career/01-home.jpg',
+        alt: 'Главная: поиск работы и обучение на Сахалине',
+      },
+      {
+        src: '/images/navigator-career/02-tools.jpg',
+        alt: 'Инструменты: консультации, тесты и карьерный план',
+      },
+      {
+        src: '/images/navigator-career/03-resumes.jpg',
+        alt: 'Поиск анкет соискателей с фильтрами',
+      },
+      {
+        src: '/images/navigator-career/04-courses.jpg',
+        alt: 'Каталог курсов с фильтрами по сфере и формату',
+      },
+    ],
+    cta: {
+      eyebrow: 'Product',
+      title: 'Открыть Навигатор карьеры',
       label: 'Сайт продукта',
     },
   },
