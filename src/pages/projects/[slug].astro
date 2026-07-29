@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ScreenshotSlider from '../../components/ScreenshotSlider.astro';
 import ArchitectureDiagram from '../../components/ArchitectureDiagram.astro';
-import { projects, getProject } from '../../data/content';
+import { projects, getProject, projectKindLabel } from '../../data/content';
 
 export function getStaticPaths() {
   return projects.map((project) => ({
@@ -18,23 +18,28 @@ if (!project) {
 }
 
 const hasFeatures = Boolean(project.features?.length);
+const hasContributions = Boolean(project.contributions?.length);
 const hasDecisions = Boolean(project.decisions?.length);
 const hasDiagram = Boolean(project.architecture?.diagram);
 const hasNodeFlow = Boolean(project.architecture?.nodes?.length);
 const hasRichArchitecture = hasDiagram || hasNodeFlow;
+const hasArchitecture = Boolean(project.architectureNote) || hasRichArchitecture;
 const primaryLink = project.links[0];
 const showCta = Boolean(project.cta && primaryLink);
 const aboutParagraphs = project.paragraphs?.length
   ? project.paragraphs
   : [project.description];
+const contributionsTitle =
+  project.kind === 'product' ? 'Мой вклад' : 'Что сделал';
 
 let step = 1;
 const steps = {
   about: String(step++).padStart(2, '0'),
-  screens: String(step++).padStart(2, '0'),
+  screens: project.screenshots.length ? String(step++).padStart(2, '0') : null,
+  contributions: hasContributions ? String(step++).padStart(2, '0') : null,
   features: hasFeatures ? String(step++).padStart(2, '0') : null,
   decisions: hasDecisions ? String(step++).padStart(2, '0') : null,
-  architecture: String(step++).padStart(2, '0'),
+  architecture: hasArchitecture ? String(step++).padStart(2, '0') : null,
   stack: String(step++).padStart(2, '0'),
 };
 ---
@@ -45,7 +50,19 @@ const steps = {
       <a class="back" href="/#projects">← К портфолио</a>
 
       <header class="hero">
-        {project.eyebrow && <p class="eyebrow">{project.eyebrow}</p>}
+        <p class="project-meta">
+          <span class="project-kind">{projectKindLabel[project.kind]}</span>
+          {
+            project.eyebrow && (
+              <>
+                <span class="project-meta-sep" aria-hidden="true">
+                  ·
+                </span>
+                <span class="project-meta-note">{project.eyebrow}</span>
+              </>
+            )
+          }
+        </p>
         <h1>{project.title}</h1>
         <p class="summary">{project.summary}</p>
 
@@ -80,13 +97,37 @@ const steps = {
         </div>
       </section>
 
-      <section class="screens block" aria-labelledby="screens-title">
-        <div class="section-title">
-          <p class="step">{steps.screens}</p>
-          <h2 id="screens-title">Интерфейс</h2>
-        </div>
-        <ScreenshotSlider images={project.screenshots} id={`project-${project.slug}`} />
-      </section>
+      {
+        steps.screens && (
+          <section class="screens block" aria-labelledby="screens-title">
+            <div class="section-title">
+              <p class="step">{steps.screens}</p>
+              <h2 id="screens-title">Интерфейс</h2>
+            </div>
+            <ScreenshotSlider images={project.screenshots} id={`project-${project.slug}`} />
+          </section>
+        )
+      }
+
+      {
+        hasContributions && (
+          <section class="block" aria-labelledby="contributions-title">
+            <div class="section-title">
+              <p class="step">{steps.contributions}</p>
+              <h2 id="contributions-title">{contributionsTitle}</h2>
+            </div>
+
+            <ul class="features">
+              {project.contributions!.map((item) => (
+                <li class="feature">
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
 
       {
         hasFeatures && (
@@ -128,74 +169,65 @@ const steps = {
         )
       }
 
-      <section class="block" aria-labelledby="architecture-title">
-        <div class="section-title">
-          <p class="step">{steps.architecture}</p>
-          <h2 id="architecture-title">Архитектура</h2>
-        </div>
+      {
+        hasArchitecture && (
+          <section class="block" aria-labelledby="architecture-title">
+            <div class="section-title">
+              <p class="step">{steps.architecture}</p>
+              <h2 id="architecture-title">Архитектура</h2>
+            </div>
 
-        {
-          hasRichArchitecture ? (
-            <div class="architecture">
-              {project.architecture?.diagram ? (
-                <ArchitectureDiagram
-                  variant={project.architecture.diagram}
-                  title={`Схема архитектуры ${project.title}`}
-                />
-              ) : (
-                <div
-                  class="architecture-flow"
-                  aria-label={`Схема архитектуры ${project.title}`}
-                >
-                  {project.architecture!.nodes!.map((node, index) => (
-                    <>
-                      {index > 0 && (
-                        <span class="arch-arrow" aria-hidden="true">
-                          →
-                        </span>
-                      )}
-                      <div class="arch-node">
-                        <span>{node.label}</span>
-                        <strong>{node.title}</strong>
-                      </div>
-                    </>
-                  ))}
-                </div>
-              )}
-
-              {
-                project.architecture?.targets &&
-                  project.architecture.targets.length > 0 && (
-                    <div class="architecture-targets">
-                      {project.architecture.targets.map((target) => (
-                        <span>{target}</span>
+            {
+              hasRichArchitecture ? (
+                <div class="architecture">
+                  {project.architecture?.diagram ? (
+                    <ArchitectureDiagram
+                      variant={project.architecture.diagram}
+                      title={`Схема архитектуры ${project.title}`}
+                    />
+                  ) : (
+                    <div
+                      class="architecture-flow"
+                      aria-label={`Схема архитектуры ${project.title}`}
+                    >
+                      {project.architecture!.nodes!.map((node, index) => (
+                        <>
+                          {index > 0 && (
+                            <span class="arch-arrow" aria-hidden="true">
+                              →
+                            </span>
+                          )}
+                          <div class="arch-node">
+                            <span>{node.label}</span>
+                            <strong>{node.title}</strong>
+                          </div>
+                        </>
                       ))}
                     </div>
-                  )
-              }
+                  )}
 
-              <p class="architecture-note">{project.architectureNote}</p>
-            </div>
-          ) : (
-            <>
-              <p class="prose">{project.architectureNote}</p>
-              <div class="architecture-flow simple-arch" aria-hidden="true">
-                <div class="arch-node">
-                  <strong>Client</strong>
+                  {
+                    project.architecture?.targets &&
+                      project.architecture.targets.length > 0 && (
+                        <div class="architecture-targets">
+                          {project.architecture.targets.map((target) => (
+                            <span>{target}</span>
+                          ))}
+                        </div>
+                      )
+                  }
+
+                  {project.architectureNote && (
+                    <p class="architecture-note">{project.architectureNote}</p>
+                  )}
                 </div>
-                <span class="arch-arrow">→</span>
-                <div class="arch-node">
-                  <strong>API</strong>
-                </div>
-                <span class="arch-arrow">→</span>
-                <div class="arch-node">
-                  <strong>DB</strong>
-                </div>
-              </div>
-            </>
-          )
-        }
-      </section>
+              ) : (
+                <p class="prose">{project.architectureNote}</p>
+              )
+            }
+          </section>
+        )
+      }
 
       <section class="stack block" aria-labelledby="stack-title">
         <div class="section-title">
@@ -267,8 +299,12 @@ const steps = {
     text-transform: uppercase;
   }
 
+  .project-meta {
+    margin-bottom: 0;
+  }
+
   h1 {
-    margin: 0.4rem 0 0.85rem;
+    margin: 0.55rem 0 0.85rem;
     font-size: clamp(2.25rem, 5vw, 3.4rem);
     line-height: 1.1;
     letter-spacing: -0.04em;
