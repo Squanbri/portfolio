@@ -222,6 +222,10 @@ export const projects: Project[] = [
         src: '/images/letter-box/06-overview-light.png',
         alt: 'Обзор в светлой теме',
       },
+      {
+        src: '/images/letter-box/07-inbox-email.png',
+        alt: 'Входящие: просмотр письма с вложением',
+      },
     ],
     features: [
       {
