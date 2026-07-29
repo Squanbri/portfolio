@@ -115,7 +115,7 @@ export type ArchitectureNode = {
 
 export type ProjectArchitecture = {
   /** Built-in static diagram id */
-  diagram?: 'letter-box';
+  diagram?: 'letter-box' | 'screen-translator';
   nodes?: ArchitectureNode[];
   targets?: string[];
 };
@@ -315,15 +315,23 @@ export const projects: Project[] = [
     ],
     screenshots: [
       {
-        src: '/images/screen-translator/01-overlay.svg',
-        alt: 'Overlay с распознанными словами и переводом',
+        src: '/images/screen-translator/01-recognizing.png',
+        alt: 'OCR: сканирование экрана и распознавание текста',
       },
       {
-        src: '/images/screen-translator/02-selection.svg',
-        alt: 'Выделение фразы на экране',
+        src: '/images/screen-translator/02-overlay.png',
+        alt: 'Overlay с распознанными словами и bounding boxes',
       },
       {
-        src: '/images/screen-translator/03-dictionary.svg',
+        src: '/images/screen-translator/03-word.png',
+        alt: 'Перевод отдельного слова поверх экрана',
+      },
+      {
+        src: '/images/screen-translator/04-phrase.png',
+        alt: 'Выделение и перевод фразы',
+      },
+      {
+        src: '/images/screen-translator/05-dictionary.png',
         alt: 'Личный словарь сохранённых слов',
       },
     ],
@@ -354,16 +362,10 @@ export const projects: Project[] = [
       },
     ],
     architecture: {
-      nodes: [
-        { label: 'macOS', title: 'Electron + React' },
-        { label: 'REST', title: 'FastAPI' },
-        { label: 'Recognition', title: 'Tesseract OCR' },
-        { label: 'Translation', title: 'Argos Translate' },
-      ],
-      targets: ['SQLite dictionary', 'Docker Compose', 'DMG build'],
+      diagram: 'screen-translator',
     },
     architectureNote:
-      'Electron захватывает основной дисплей и передаёт изображение в FastAPI. Tesseract возвращает слова и координаты, React строит интерактивный overlay, а выбранный текст переводится через Argos Translate. Сохранённые пары слов хранятся в SQLite.',
+      'Electron tray по хоткею снимает экран и открывает Overlay. Overlay шлёт image в FastAPI: Tesseract распознаёт текст с координатами, Argos Translate переводит офлайн, а сохранённые слова пишутся в SQLite. Overlay общается с Electron через IPC.',
     cta: {
       eyebrow: 'Open source',
       title: 'Исходный код на GitHub',
