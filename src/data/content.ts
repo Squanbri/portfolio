@@ -120,12 +120,22 @@ export type ProjectArchitecture = {
   targets?: string[];
 };
 
+export type ProjectKind = 'personal' | 'product';
+
+export const projectKindLabel: Record<ProjectKind, string> = {
+  personal: 'Pet',
+  product: 'Продукт',
+};
+
 export type Project = {
   slug: string;
+  kind: ProjectKind;
   title: string;
   summary: string;
   description: string;
   paragraphs?: string[];
+  /** What I built / owned — especially useful for product work */
+  contributions?: ProjectFeature[];
   decisions?: ProjectFeature[];
   eyebrow?: string;
   stack: string[];
@@ -133,7 +143,7 @@ export type Project = {
   screenshots: { src: string; alt: string }[];
   features?: ProjectFeature[];
   architecture?: ProjectArchitecture;
-  architectureNote: string;
+  architectureNote?: string;
   cta?: {
     eyebrow: string;
     title: string;
@@ -143,9 +153,89 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    slug: 'safari-portal',
+    kind: 'product',
+    title: 'Safari Portal',
+    eyebrow: 'JetRockets · SaaS · Travel',
+    summary:
+      'Платформа для travel-агентов и туроператоров: интерактивные itinerary, Lookbook, guest portal и мобильное приложение для путешественников.',
+    description:
+      'B2B2C SaaS для DMCs, travel advisors и tour operators: создание предложений и детальных маршрутов, CRM/pipeline, формы, контент-библиотека и branded traveler app.',
+    paragraphs: [
+      'Safari Portal помогает агентам быстро собирать красивые digital/PDF-предложения и полноценные itinerary вместо таблиц и разрозненных документов. Клиенты получают guest portal и white-label мобильное приложение с доступом к поездке даже офлайн.',
+      'Продукт развивается командой JetRockets вместе с клиентом из США: веб-платформа, мобильные клиенты и инфраструктура поставки в сторы.',
+    ],
+    contributions: [
+      {
+        title: 'React Native приложение',
+        text: 'Разработка traveler app с полным циклом — от фич до публикации и сопровождения в App Store / Google Play.',
+      },
+      {
+        title: 'Нативные модули',
+        text: 'Swift/Kotlin-модули для React Native: Dynamic Island, live-виджеты и background-задачи.',
+      },
+      {
+        title: 'CI/CD мобильных сборок',
+        text: 'Пайплайны сборки и автоматической публикации приложений в сторы.',
+      },
+      {
+        title: 'Миграция web SPA',
+        text: 'Участие в миграции крупного legacy SPA на Turbo Rails.',
+      },
+    ],
+    stack: [
+      'React Native',
+      'TypeScript',
+      'React',
+      'Redux',
+      'Ruby on Rails',
+      'Turbo Rails',
+      'PostgreSQL',
+      'Swift',
+      'Kotlin',
+      'CI/CD',
+      'AWS',
+      'Docker',
+    ],
+    links: [
+      {
+        label: 'Сайт',
+        href: 'https://www.safariportal.app/',
+      },
+      {
+        label: 'Кейс JetRockets',
+        href: 'https://jetrockets.com/portfolio/safariportal',
+      },
+    ],
+    screenshots: [
+      {
+        src: '/images/safari-portal/02-dashboard.png',
+        alt: 'Travel dashboard: action items, invoice и детали поездки',
+      },
+      {
+        src: '/images/safari-portal/01-planning.png',
+        alt: 'Lookbook и proposal-страницы для клиентов',
+      },
+      {
+        src: '/images/safari-portal/03-templates.png',
+        alt: 'Детальный день itinerary с активностями и локациями',
+      },
+      {
+        src: '/images/safari-portal/04-portfolio.png',
+        alt: 'Примеры branded itinerary и контентных страниц',
+      },
+    ],
+    cta: {
+      eyebrow: 'Product',
+      title: 'Открыть Safari Portal',
+      label: 'Сайт продукта',
+    },
+  },
+  {
     slug: 'letter-box',
+    kind: 'personal',
     title: 'Letter Box',
-    eyebrow: 'Personal project · Full-stack · macOS',
+    eyebrow: 'Full-stack · macOS',
     summary:
       'Self-hosted почтовый клиент для macOS: несколько аккаунтов, фоновая синхронизация и локальные AI-теги без облачных LLM.',
     description:
@@ -266,8 +356,9 @@ export const projects: Project[] = [
   },
   {
     slug: 'screen-translator',
+    kind: 'personal',
     title: 'Screen Translator',
-    eyebrow: 'Personal project · Desktop · macOS',
+    eyebrow: 'Desktop · macOS',
     summary:
       'Фоновый переводчик экрана для macOS: хоткей, OCR поверх любого приложения, перевод слова или фразы и личный словарь.',
     description:
@@ -371,36 +462,6 @@ export const projects: Project[] = [
       title: 'Исходный код на GitHub',
       label: 'Открыть репозиторий',
     },
-  },
-  {
-    slug: 'project-one',
-    title: 'Проект One',
-    summary: 'Короткое описание первого проекта. Что делает и зачем.',
-    description:
-      'Подробное описание проекта. Цели, аудитория, ключевые решения и результат. Текст заполнится позже.',
-    stack: ['TypeScript', 'React', 'Node.js'],
-    links: [],
-    screenshots: [
-      { src: '/images/placeholder-1.svg', alt: 'Скриншот 1' },
-      { src: '/images/placeholder-2.svg', alt: 'Скриншот 2' },
-      { src: '/images/placeholder-3.svg', alt: 'Скриншот 3' },
-    ],
-    architectureNote:
-      'Здесь будет схема архитектуры. Пока — заглушка: клиент → API → БД.',
-  },
-  {
-    slug: 'project-two',
-    title: 'Проект Two',
-    summary: 'Короткое описание второго проекта. Чем интересен стек или идея.',
-    description:
-      'Подробное описание второго проекта. Текст заполнится позже.',
-    stack: ['React Native', 'TypeScript', 'CI/CD'],
-    links: [],
-    screenshots: [
-      { src: '/images/placeholder-2.svg', alt: 'Скриншот 1' },
-      { src: '/images/placeholder-3.svg', alt: 'Скриншот 2' },
-    ],
-    architectureNote: 'Схема архитектуры появится позже.',
   },
 ];
 

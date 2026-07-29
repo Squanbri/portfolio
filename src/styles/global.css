@@ -140,6 +140,40 @@ a:hover {
   padding: 0;
 }
 
+.project-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+}
+
+.project-kind {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+
+.project-meta-sep {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  opacity: 0.5;
+  user-select: none;
+}
+
+.project-meta-note {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;

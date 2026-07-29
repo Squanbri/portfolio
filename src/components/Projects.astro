@@ -1,37 +1,63 @@
 ---
-import { projects } from '../data/content';
+import { projects, projectKindLabel } from '../data/content';
 import ScreenshotSlider from './ScreenshotSlider.astro';
+
+const ordered = [...projects].sort((a, b) => {
+  if (a.kind === b.kind) return 0;
+  return a.kind === 'product' ? -1 : 1;
+});
 ---
 
 <section id="projects" class="section">
   <div class="container">
     <div class="section-header">
       <h2>Проекты</h2>
-      <p>Избранные работы — от pet-проектов до продуктовых решений.</p>
+      <p>Рабочие продукты и pet-проекты.</p>
     </div>
 
     <div class="list">
       {
-        projects.map((project) => (
+        ordered.map((project) => (
           <article class="project">
             <div class="copy">
+              <p class="project-meta">
+                <span class="project-kind">{projectKindLabel[project.kind]}</span>
+                {
+                  project.eyebrow && (
+                    <>
+                      <span class="project-meta-sep" aria-hidden="true">
+                        ·
+                      </span>
+                      <span class="project-meta-note">{project.eyebrow}</span>
+                    </>
+                  )
+                }
+              </p>
               <h3>
                 <a href={`/projects/${project.slug}`}>{project.title}</a>
               </h3>
               <p>{project.summary}</p>
               <ul class="tag-list">
-                {project.stack.map((item) => (
+                {project.stack.slice(0, 5).map((item) => (
                   <li>
                     <span class="tag">{item}</span>
                   </li>
                 ))}
+                {project.stack.length > 5 && (
+                  <li>
+                    <span class="tag muted">+{project.stack.length - 5}</span>
+                  </li>
+                )}
               </ul>
               <p class="more">
                 <a href={`/projects/${project.slug}`}>Подробнее →</a>
               </p>
             </div>
             <div class="media">
-              <ScreenshotSlider images={project.screenshots} id={`slider-${project.slug}`} />
+              <ScreenshotSlider
+                images={project.screenshots}
+                id={`slider-${project.slug}`}
+              />
             </div>
           </article>
         ))
@@ -60,6 +86,10 @@ import ScreenshotSlider from './ScreenshotSlider.astro';
     padding-bottom: 0;
   }
 
+  .project-meta {
+    margin-bottom: 0.45rem;
+  }
+
   h3 {
     margin: 0 0 0.5rem;
     font-size: 1.35rem;
@@ -77,6 +107,10 @@ import ScreenshotSlider from './ScreenshotSlider.astro';
   .copy > p {
     margin: 0 0 0.9rem;
     color: var(--text-muted);
+  }
+
+  .muted {
+    opacity: 0.7;
   }
 
   .more {
