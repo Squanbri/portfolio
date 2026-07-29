@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900">
+<rect width="1440" height="900" fill="#051009"/><rect x="55" y="55" width="1330" height="790" rx="16" fill="#13221a" stroke="#315641"/>
+<text x="90" y="105" fill="#adffc5" font-family="monospace" font-size="16" letter-spacing="3">SCREEN TRANSLATOR</text><text x="1170" y="105" fill="#6faf80" font-family="monospace" font-size="12">42 WORDS FOUND</text>
+<rect x="120" y="165" width="1200" height="570" rx="8" fill="#eef1ee"/><text x="190" y="275" fill="#26342a" font-family="Arial" font-size="25">The quickest way to understand unfamiliar text</text>
+<text x="190" y="340" fill="#526158" font-family="Arial" font-size="22">Drag across several words to translate the whole phrase.</text>
+<rect x="176" y="306" width="760" height="58" fill="#52ff86" fill-opacity=".13" stroke="#52ff86" stroke-width="2"/><rect x="176" y="282" width="138" height="24" fill="#52ff86"/>
+<text x="187" y="299" fill="#051009" font-family="monospace" font-size="10">MULTI SELECT</text>
+<g fill="#52ff86" fill-opacity=".08" stroke="#39d76c"><rect x="190" y="310" width="48" height="40"/><rect x="246" y="310" width="78" height="40"/><rect x="332" y="310" width="67" height="40"/><rect x="407" y="310" width="77" height="40"/><rect x="492" y="310" width="30" height="40"/><rect x="530" y="310" width="92" height="40"/><rect x="630" y="310" width="40" height="40"/><rect x="678" y="310" width="73" height="40"/><rect x="759" y="310" width="66" height="40"/><rect x="833" y="310" width="90" height="40"/></g>
+<rect x="715" y="430" width="490" height="190" fill="#07130c" stroke="#52ff86" stroke-opacity=".5"/><text x="740" y="468" fill="#79c18c" font-family="monospace" font-size="11">SELECTED PHRASE</text><text x="740" y="515" fill="#8eaa96" font-family="Arial" font-size="15">Drag across several words...</text><text x="740" y="566" fill="#eafff0" font-family="Arial" font-size="23">Выделите несколько слов...</text>
+<text x="90" y="805" fill="#6faf80" font-family="monospace" font-size="12">ESC CLOSE  ·  RELEASE TO TRANSLATE</text></svg>
