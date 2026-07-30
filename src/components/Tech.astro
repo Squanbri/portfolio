@@ -1,17 +1,16 @@
 ---
-import { techGroups } from '../data/content';
+import { skillGroups } from '../data/content';
 ---
 
 <section id="tech" class="section">
   <div class="container">
     <div class="section-header">
-      <h2>Технологии</h2>
-      <p>Основной стек — React и TypeScript; также mobile и инструменты поставки.</p>
+      <h2>Навыки</h2>
     </div>
 
     <div class="groups">
       {
-        techGroups.map((group) => (
+        skillGroups.map((group) => (
           <div class="group">
             <h3>{group.title}</h3>
             <ul class="tag-list">
@@ -31,8 +30,8 @@ import { techGroups } from '../data/content';
 <style>
   .groups {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem 2rem;
   }
 
   .group h3 {

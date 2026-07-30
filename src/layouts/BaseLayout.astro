@@ -12,14 +12,14 @@ interface Props {
 }
 
 const {
-  title = 'Евгений Маркитан — Frontend-разработчик',
+  title = 'Евгений Маркитан — Разработчик программного обеспечения',
   description =
-    'Frontend-разработчик с опытом 5+ лет. React, TypeScript, веб и мобильные приложения.',
+    'Разработчик с опытом 5+ лет. Веб-, мобильные и клиент-серверные приложения: интерфейсы, API, базы данных и фоновые задачи.',
 } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="ru">
+<html lang="ru" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -31,14 +31,10 @@ const {
       (function () {
         try {
           var stored = localStorage.getItem('theme');
-          var theme =
-            stored ||
-            (window.matchMedia('(prefers-color-scheme: dark)').matches
-              ? 'dark'
-              : 'light');
+          var theme = stored || 'dark';
           document.documentElement.setAttribute('data-theme', theme);
         } catch (e) {
-          document.documentElement.setAttribute('data-theme', 'light');
+          document.documentElement.setAttribute('data-theme', 'dark');
         }
       })();
     </script>

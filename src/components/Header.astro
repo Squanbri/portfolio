@@ -1,9 +1,11 @@
 ---
+import { site } from '../data/content';
+
 const links = [
-  { href: '/#about', label: 'Обо мне' },
-  { href: '/#experience', label: 'Опыт' },
-  { href: '/#tech', label: 'Технологии' },
+  { href: '/#about', label: 'Профиль' },
   { href: '/#projects', label: 'Проекты' },
+  { href: '/#experience', label: 'Опыт' },
+  { href: '/#tech', label: 'Навыки' },
 ];
 ---
 
@@ -56,6 +58,12 @@ const links = [
           </li>
         ))
       }
+      <li>
+        <a href={site.phoneHref}>{site.phone}</a>
+      </li>
+      <li>
+        <a href={`mailto:${site.email}`}>{site.email}</a>
+      </li>
     </ul>
   </nav>
 </header>
