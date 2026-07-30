@@ -1,31 +1,26 @@
 ---
-import { about, site } from '../data/content';
+import { profile, site } from '../data/content';
 ---
 
 <section id="about" class="section">
   <div class="container">
     <div class="section-header">
-      <h2>{about.title}</h2>
+      <h2>{profile.title}</h2>
       <p class="status mono">{site.seeking}</p>
     </div>
 
-    <p class="about-text">{about.text}</p>
-
-    <ul class="facts">
+    <div class="pillars">
       {
-        about.facts.map((fact) => (
-          <li>
-            <span class="label mono">{fact.label}</span>
-            <span>{fact.value}</span>
-          </li>
+        profile.pillars.map((pillar) => (
+          <article class="pillar">
+            <h3>{pillar.title}</h3>
+            <p>{pillar.text}</p>
+          </article>
         ))
       }
-    </ul>
+    </div>
 
-    <p class="education">
-      <span class="label mono">Образование</span>
-      {about.education}
-    </p>
+    <p class="meta mono">{profile.meta}</p>
   </div>
 </section>
 
@@ -36,44 +31,35 @@ import { about, site } from '../data/content';
     font-size: 0.85rem;
   }
 
-  .about-text {
-    margin: 0 0 1.5rem;
-    max-width: 42rem;
-    font-size: 1.12rem;
-    color: var(--text);
-  }
-
-  .facts {
-    list-style: none;
-    margin: 0 0 1.25rem;
-    padding: 0;
+  .pillars {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.85rem 1.5rem;
-    max-width: 40rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem 1.75rem;
+    margin-bottom: 1.5rem;
   }
 
-  .facts li {
-    display: grid;
-    gap: 0.15rem;
+  .pillar h3 {
+    margin: 0 0 0.45rem;
+    font-size: 1.05rem;
+    font-weight: 650;
   }
 
-  .label {
-    color: var(--text-muted);
-    font-size: 0.78rem;
-  }
-
-  .education {
+  .pillar p {
     margin: 0;
-    max-width: 42rem;
     color: var(--text-muted);
-    display: grid;
-    gap: 0.2rem;
+    font-size: 1rem;
   }
 
-  @media (max-width: 560px) {
-    .facts {
+  .meta {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 800px) {
+    .pillars {
       grid-template-columns: 1fr;
+      gap: 1.25rem;
     }
   }
 </style>

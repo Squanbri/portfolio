@@ -5,15 +5,7 @@ import { site } from '../data/content';
 <footer class="site-footer">
   <div class="container footer-inner">
     <p class="mono">{site.name}</p>
-    <p class="muted">
-      <a href={site.phoneHref}>{site.phone}</a>
-      ·
-      <a href={`mailto:${site.email}`}>{site.email}</a>
-      ·
-      <a href={site.links.telegram} rel="noopener noreferrer" target="_blank">
-        Telegram {site.links.telegramLabel}
-      </a>
-    </p>
+    <p class="muted">Тверь · открыт к предложениям</p>
   </div>
 </footer>
 
@@ -21,7 +13,6 @@ import { site } from '../data/content';
   .site-footer {
     border-top: 1px solid var(--border);
     padding-block: 2rem;
-    margin-top: 2rem;
   }
 
   .footer-inner {
@@ -39,13 +30,5 @@ import { site } from '../data/content';
   .muted {
     color: var(--text-muted);
     font-size: 0.95rem;
-  }
-
-  .muted a {
-    color: inherit;
-  }
-
-  .muted a:hover {
-    color: var(--accent);
   }
 </style>

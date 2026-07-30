@@ -1,29 +1,46 @@
-/** Put your photo at public/images/avatar.jpg and set photo to '/images/avatar.jpg' */
+/** Put your photo at public/images/avatar.png and set photo to '/images/avatar.png' */
 export const site = {
   name: 'Евгений Маркитан',
-  role: 'Frontend-разработчик',
-  photo: '/images/avatar.svg',
+  role: 'Разработчик программного обеспечения',
+  photo: '/images/avatar.png',
   email: 'evgeniy-markitan@yandex.ru',
   phone: '+7 961 014-07-15',
   phoneHref: 'tel:+79610140715',
   location: 'Тверь',
+  tagline:
+    'Проектирую веб-, мобильные и клиент-серверные приложения — от интерфейса и интеграций до API, баз данных и фоновых задач.',
+  focus:
+    '5+ лет коммерческой разработки · открыт к frontend, full-stack и backend задачам',
   seeking: 'Активно ищу работу · Россия, Тверь, Москва · удалённо / гибрид',
   experienceYears: '5 лет и 10 месяцев',
   links: {
     telegram: 'https://t.me/squanbri',
     telegramLabel: '@squanbri',
+    github: 'https://github.com/Squanbri',
+    /** Публичная страница резюме на hh.ru */
+    hh: 'https://hh.ru/resume/04db88c1ff10d683c80039ed1f536f35557958',
+    /** Файл: public/resume.pdf */
+    resume: 'https://drive.google.com/file/d/1F5ZR29hv6FT0j-TfnhzliNH7Cbo4E9Da/view?usp=sharing',
   },
 };
 
-export const about = {
-  title: 'Обо мне',
-  text: 'Frontend-разработчик с опытом 5+ лет. Основной стек — React и TypeScript. Есть опыт разработки веб- и мобильных приложений, full-stack разработки, CI/CD и работы в англоязычной команде.',
-  facts: [
-    { label: 'Локация', value: 'Тверь' },
-    { label: 'Опыт', value: '5 лет и 10 месяцев' },
-    { label: 'Формат', value: 'Удалённо, гибрид' },
-    { label: 'Языки', value: 'Русский, English (B1)' },
+export const profile = {
+  title: 'Профиль',
+  pillars: [
+    {
+      title: 'Продуктовая разработка',
+      text: 'Разрабатываю веб- и мобильные приложения, интегрирую внешние сервисы и довожу функции до production.',
+    },
+    {
+      title: 'Backend и архитектура',
+      text: 'Проектирую REST API, клиент-серверное взаимодействие, хранение данных и асинхронную обработку задач.',
+    },
+    {
+      title: 'Инженерная база',
+      text: 'Систематизирую знания по структурам данных, алгоритмам, сетевому взаимодействию, базам данных и проектированию систем.',
+    },
   ],
+  meta: 'Русский, English (B1)',
   education:
     'ГБПОУ «Тверской колледж им. А.Н. Коняева» — Информационные системы и программирование, 2022',
 };
@@ -40,13 +57,13 @@ export const experience: ExperienceItem[] = [
   {
     company: 'JetRockets',
     role: 'Frontend-разработчик',
-    period: 'Октябрь 2024 — Июнь 2026',
-    duration: '1 год и 9 месяцев',
+    period: 'Октябрь 2023 — Июнь 2026',
+    duration: '2 года и 9 месяцев',
     highlights: [
       'Разрабатывал мобильные приложения на React Native с полным циклом — от разработки до публикации в App Store/Google Play и сопровождения',
       'Участвовал в миграции крупного legacy SPA-проекта на Turbo Rails',
       'Работал в англоязычной команде с разработчиками, менеджерами и клиентами',
-      'Настраивал CI/CD пайплайны для сборки и автоматической публикации мобильных приложений в сторы',
+      'Проектировал и поддерживал CI/CD-пайплайны для автоматической сборки, тестирования и публикации приложений.',
       'Разрабатывал нативные модули на Swift/Kotlin для React Native (Dynamic Island, live-виджеты, background-задачи)',
     ],
   },
@@ -63,10 +80,10 @@ export const experience: ExperienceItem[] = [
     ],
   },
   {
-    company: 'Лазурь Медиа',
+    company: 'Lazur Media',
     role: 'Fullstack-разработчик',
-    period: 'Октябрь 2019 — Июль 2022',
-    duration: '2 года и 10 месяцев',
+    period: 'Октябрь 2020 — Июль 2022',
+    duration: '1 год и 10 месяцев',
     highlights: [
       'Проектировал и разрабатывал REST API на Laravel и Ruby on Rails для веб- и мобильных клиентов',
       'Самостоятельно закрывал полный цикл разработки фич — от backend и API до интерфейса на Vue и React',
@@ -76,30 +93,34 @@ export const experience: ExperienceItem[] = [
   },
 ];
 
-export const techGroups = [
+export const skillGroups = [
   {
-    title: 'Frontend',
+    title: 'Клиентская разработка',
+    items: ['React', 'React Native', 'Next.js', 'Electron', 'Angular', 'Vue'],
+  },
+  {
+    title: 'Backend и данные',
     items: [
-      'HTML5',
-      'CSS3',
-      'JavaScript',
-      'TypeScript',
-      'React',
-      'Next.js',
-      'Redux',
-      'MobX',
-      'Angular',
-      'NgRx',
-      'RxJS',
+      'SQL',
+      'Node.js',
+      'NestJS',
+      'Laravel',
+      'FastAPI',
+      'Redis',
     ],
   },
   {
-    title: 'Mobile',
-    items: ['React Native', 'Ionic', 'Capacitor'],
+    title: 'Инженерные инструменты',
+    items: ['Docker', 'Linux', 'Git', 'CI/CD'],
   },
   {
-    title: 'Backend и инструменты',
-    items: ['Node.js', 'Git', 'Docker', 'Linux', 'CI/CD'],
+    title: 'Computer Science',
+    items: [
+      'Структуры данных',
+      'Алгоритмы',
+      'Оценка сложности',
+      'Клиент-серверная архитектура',
+    ],
   },
 ];
 
@@ -158,7 +179,7 @@ export const projects: Project[] = [
     title: 'Safari Portal',
     eyebrow: 'JetRockets · SaaS · Travel',
     summary:
-      'Платформа для travel-агентов и туроператоров: интерактивные itinerary, Lookbook, guest portal и мобильное приложение для путешественников.',
+      'Платформа для travel-агентов и туроператоров: создание интерактивных маршрутов и мобильное приложение для путешественников.',
     description:
       'B2B2C SaaS для DMCs, travel advisors и tour operators: создание предложений и детальных маршрутов, CRM/pipeline, формы, контент-библиотека и branded traveler app.',
     paragraphs: [
@@ -288,7 +309,7 @@ export const projects: Project[] = [
     slug: 'navigator-career',
     kind: 'product',
     title: 'Навигатор карьеры',
-    eyebrow: 'Сахалин · HRTech · Web',
+    eyebrow: 'Lazur Media · HRTech · Web',
     summary:
       'Региональная платформа для поиска работы, обучения и карьерного развития на Сахалине — для специалистов, студентов, школьников и компаний.',
     description:
@@ -354,7 +375,7 @@ export const projects: Project[] = [
     title: 'Letter Box',
     eyebrow: 'Full-stack · macOS',
     summary:
-      'Self-hosted почтовый клиент для macOS: несколько аккаунтов, фоновая синхронизация и локальные AI-теги без облачных LLM.',
+      'Self-hosted почтовый клиент для macOS: несколько аккаунтов, фоновая синхронизация и локальные AI-теги с локальной LLM.',
     description:
       'Клиент-серверное приложение, в котором desktop на Electron общается с NestJS backend по REST и Socket.IO. Сервер — единственный владелец IMAP-соединений, credentials и данных.',
     paragraphs: [

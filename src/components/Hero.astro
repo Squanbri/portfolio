@@ -22,13 +22,46 @@ import { site } from '../data/content';
         </div>
       </div>
 
-      <p class="lead">
-        React и TypeScript · веб и мобильные приложения · 5+ лет опыта.
-        Открыт к предложениям: удалённо или гибрид, Тверь / Москва / Россия.
-      </p>
-      <div class="hero-cta">
-        <a class="btn btn-primary" href="#projects">Смотреть проекты</a>
-        <a class="btn btn-ghost" href={`mailto:${site.email}`}>Написать</a>
+      <p class="lead">{site.tagline}</p>
+      <p class="focus mono">{site.focus}</p>
+
+      <div class="contacts">
+        <p class="contacts-row">
+          <a href={site.phoneHref}>{site.phone}</a>
+          <span class="sep" aria-hidden="true">·</span>
+          <a href={`mailto:${site.email}`}>{site.email}</a>
+        </p>
+        <p class="contacts-row links">
+          <a
+            href={site.links.hh}
+            rel="noopener noreferrer"
+            target="_blank">HH</a
+          >
+          <span class="sep" aria-hidden="true">·</span>
+          <a
+            href={site.links.telegram}
+            rel="noopener noreferrer"
+            target="_blank">Telegram</a
+          >
+          <span class="sep" aria-hidden="true">·</span>
+          <a
+            href={site.links.github}
+            rel="noopener noreferrer"
+            target="_blank">GitHub</a
+          >
+          {
+            site.links.resume && (
+              <>
+                <span class="sep" aria-hidden="true">
+                  ·
+                </span>
+                <a href={site.links.resume} target="_blank">
+                  Резюме PDF
+                </a>
+              </>
+            )
+          }
+        </p>
       </div>
     </div>
 
@@ -107,16 +140,51 @@ import { site } from '../data/content';
   }
 
   .lead {
-    margin: 0 0 1.5rem;
+    margin: 0 0 0.75rem;
     color: var(--text-muted);
-    max-width: 34rem;
+    max-width: 36rem;
     font-size: 1.08rem;
   }
 
-  .hero-cta {
+  .focus {
+    margin: 0 0 0.9rem;
+    color: var(--accent);
+    max-width: 36rem;
+    font-size: 0.85rem;
+  }
+
+  .contacts {
+    margin: 0;
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .contacts-row {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.95rem;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.65rem;
+    align-items: center;
+    gap: 0.35rem 0.5rem;
+  }
+
+  .contacts-row.links {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+  }
+
+  .contacts a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .contacts a:hover {
+    color: var(--accent);
+  }
+
+  .contacts .sep {
+    opacity: 0.45;
   }
 
   .hero-visual {
