@@ -156,6 +156,7 @@ const fallbackPlanes = [0, 1, 2, 3, 4, 5];
     place-items: center;
     perspective: 920px;
     perspective-origin: 50% 42%;
+    transition: opacity 0.5s ease;
   }
 
   .hero__stack {
@@ -185,7 +186,7 @@ const fallbackPlanes = [0, 1, 2, 3, 4, 5];
 
   @media (prefers-reduced-motion: no-preference) {
     .hero__stack {
-      animation: stack-drift 42s ease-in-out infinite;
+      animation: stack-drift 28s ease-in-out infinite;
     }
   }
 
@@ -195,12 +196,12 @@ const fallbackPlanes = [0, 1, 2, 3, 4, 5];
       transform: rotateX(56deg) rotateZ(-4deg) translateY(0);
     }
     50% {
-      transform: rotateX(54deg) rotateZ(-2deg) translateY(6px);
+      transform: rotateX(52deg) rotateZ(1deg) translateY(10px);
     }
   }
 
   .hero__stage--live .hero__fallback {
-    opacity: 0.35;
+    opacity: 0;
   }
 
   .hero__rail {

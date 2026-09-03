@@ -27,7 +27,8 @@ function cssColor(name: string, fallback: string): CssRgb {
 }
 
 const LAYER_COUNT = 6;
-const CYCLE_MS = 48000;
+/** Полный цикл idle-движения: медленно, но заметно глазу. */
+const CYCLE_MS = 32000;
 
 const vertex = /* glsl */ `
   attribute vec3 position;
@@ -41,6 +42,8 @@ const vertex = /* glsl */ `
   }
 `;
 
+/* Без fwidth: на WebGL1 он требует OES_standard_derivatives и легко ломает
+   компиляцию — тогда canvas пустой, а фолбэк уже приглушён. */
 const fragment = /* glsl */ `
   precision highp float;
   varying vec2 vUv;
@@ -50,22 +53,25 @@ const fragment = /* glsl */ `
   uniform float uGrid;
 
   float gridLine(vec2 uv, float cells) {
-    vec2 g = abs(fract(uv * cells - 0.5) - 0.5);
-    vec2 fw = fwidth(uv * cells);
-    vec2 line = 1.0 - smoothstep(vec2(0.0), max(fw * 1.15, vec2(0.02)), g);
-    return max(line.x, line.y);
+    vec2 cell = fract(uv * cells);
+    float thickness = 0.035;
+    float gx = min(cell.x, 1.0 - cell.x);
+    float gy = min(cell.y, 1.0 - cell.y);
+    float lineX = 1.0 - smoothstep(0.0, thickness, gx);
+    float lineY = 1.0 - smoothstep(0.0, thickness, gy);
+    return max(lineX, lineY);
   }
 
   void main() {
-    float edge = max(
-      smoothstep(0.0, 0.012, min(vUv.x, vUv.y)),
-      smoothstep(0.0, 0.012, min(1.0 - vUv.x, 1.0 - vUv.y))
+    float border = 0.018;
+    float frame = max(
+      1.0 - smoothstep(0.0, border, min(vUv.x, 1.0 - vUv.x)),
+      1.0 - smoothstep(0.0, border, min(vUv.y, 1.0 - vUv.y))
     );
-    float frame = 1.0 - edge;
     float grid = gridLine(vUv, uGrid);
-    float mark = max(grid * 0.92, frame);
+    float mark = max(grid * 0.85, frame);
     vec3 color = mix(uFill, uLine, mark);
-    float alpha = uAlpha * (0.08 + mark * 0.9);
+    float alpha = uAlpha * (0.12 + mark * 0.88);
     gl_FragColor = vec4(color, alpha);
   }
 `;
@@ -79,40 +85,42 @@ export function mountHeroScene(stage: HTMLElement): () => void {
   const plotter = cssColor('--plotter', '#c42d18');
   const graphite = cssColor('--graphite', '#5a6764');
 
-  const renderer = new Renderer({
-    dpr: Math.min(window.devicePixelRatio || 1, 2),
-    alpha: true,
-    antialias: true,
-    depth: true,
-  });
+  let renderer: Renderer;
+  try {
+    renderer = new Renderer({
+      dpr: Math.min(window.devicePixelRatio || 1, 2),
+      alpha: true,
+      antialias: true,
+      depth: true,
+    });
+  } catch {
+    return () => {};
+  }
+
   const { gl } = renderer;
+  if (!gl) return () => {};
+
   gl.clearColor(paper[0], paper[1], paper[2], 0);
   host.appendChild(gl.canvas);
   gl.canvas.className = 'hero__canvas';
 
-  const camera = new Camera(gl, { fov: 36, near: 0.1, far: 40 });
-  camera.position.set(0, 1.35, 4.2);
-  camera.lookAt([0, 0, 0]);
+  const camera = new Camera(gl, { fov: 38, near: 0.1, far: 40 });
+  camera.position.set(0.15, 1.55, 4.6);
+  camera.lookAt([0, -0.1, -0.4]);
 
   const scene = new Transform();
-  const geometry = new Plane(gl, { width: 2.4, height: 1.7 });
+  const geometry = new Plane(gl, { width: 2.6, height: 1.85 });
 
-  const layers: { mesh: Mesh; baseZ: number; program: Program }[] = [];
+  const layers: { mesh: Mesh; baseZ: number }[] = [];
 
   for (let i = 0; i < LAYER_COUNT; i++) {
     const depth = i / (LAYER_COUNT - 1);
-    const line =
-      depth < 0.35
-        ? new Color(
-            plotter[0] * (1 - depth) + graphite[0] * depth,
-            plotter[1] * (1 - depth) + graphite[1] * depth,
-            plotter[2] * (1 - depth) + graphite[2] * depth
-          )
-        : new Color(
-            graphite[0] * (1 - (depth - 0.35)) + paper[0] * (depth - 0.35),
-            graphite[1] * (1 - (depth - 0.35)) + paper[1] * (depth - 0.35),
-            graphite[2] * (1 - (depth - 0.35)) + paper[2] * (depth - 0.35)
-          );
+    const near = 1 - depth;
+    const line = new Color(
+      plotter[0] * near + graphite[0] * depth,
+      plotter[1] * near + graphite[1] * depth,
+      plotter[2] * near + graphite[2] * depth
+    );
 
     const program = new Program(gl, {
       vertex,
@@ -125,22 +133,27 @@ export function mountHeroScene(stage: HTMLElement): () => void {
         uLine: { value: line },
         uFill: {
           value: new Color(
-            paper[0] * 0.92 + ink[0] * 0.08,
-            paper[1] * 0.92 + ink[1] * 0.08,
-            paper[2] * 0.92 + ink[2] * 0.08
+            paper[0] * 0.88 + ink[0] * 0.12,
+            paper[1] * 0.88 + ink[1] * 0.12,
+            paper[2] * 0.88 + ink[2] * 0.12
           ),
         },
-        uAlpha: { value: 0.72 - depth * 0.5 },
-        uGrid: { value: 10 },
+        uAlpha: { value: 0.82 - depth * 0.55 },
+        uGrid: { value: 9 },
       },
     });
 
+    if (!program.program) {
+      gl.canvas.remove();
+      return () => {};
+    }
+
     const mesh = new Mesh(gl, { geometry, program });
-    const baseZ = -i * 0.48;
-    mesh.position.set(0, -0.15 - i * 0.04, baseZ);
-    mesh.rotation.x = -1.02;
+    const baseZ = -i * 0.52;
+    mesh.position.set(0, -0.2 - i * 0.05, baseZ);
+    mesh.rotation.x = -0.98;
     mesh.setParent(scene);
-    layers.push({ mesh, baseZ, program });
+    layers.push({ mesh, baseZ });
   }
 
   let raf = 0;
@@ -148,13 +161,17 @@ export function mountHeroScene(stage: HTMLElement): () => void {
   let pageVisible = document.visibilityState !== 'hidden';
   let running = false;
   let scrollPush = 0;
-  let width = 0;
-  let height = 0;
+  let failed = false;
+
+  const teardownCanvas = () => {
+    stage.classList.remove('hero__stage--live');
+    gl.canvas.remove();
+  };
 
   const resize = () => {
     const rect = stage.getBoundingClientRect();
-    width = Math.max(1, Math.floor(rect.width));
-    height = Math.max(1, Math.floor(rect.height));
+    const width = Math.max(1, Math.floor(rect.width));
+    const height = Math.max(1, Math.floor(rect.height));
     renderer.setSize(width, height);
     camera.perspective({ aspect: width / height });
   };
@@ -162,32 +179,42 @@ export function mountHeroScene(stage: HTMLElement): () => void {
   const readScroll = () => {
     const rect = stage.getBoundingClientRect();
     const travel = Math.max(rect.height, 1);
-    scrollPush = Math.min(1.35, Math.max(0, -rect.top / travel));
+    scrollPush = Math.min(1.2, Math.max(0, -rect.top / travel));
   };
 
   const frame = (t: number) => {
-    if (!running) return;
+    if (!running || failed) return;
     raf = requestAnimationFrame(frame);
 
-    const phase = (t % CYCLE_MS) / CYCLE_MS;
-    const drift = Math.sin(phase * Math.PI * 2) * 0.08;
-    const sway = Math.cos(phase * Math.PI * 2) * 0.045;
+    try {
+      const phase = (t % CYCLE_MS) / CYCLE_MS;
+      const drift = Math.sin(phase * Math.PI * 2);
+      const sway = Math.cos(phase * Math.PI * 2);
 
-    camera.position.x = sway;
-    camera.position.y = 1.35 + drift * 0.25;
-    camera.position.z = 4.2 - scrollPush * 2.4;
-    camera.lookAt([0, -0.05 - scrollPush * 0.2, -scrollPush * 0.9]);
+      camera.position.x = 0.15 + sway * 0.22;
+      camera.position.y = 1.55 + drift * 0.12;
+      camera.position.z = 4.6 - scrollPush * 2.8;
+      camera.lookAt([
+        sway * 0.08,
+        -0.1 - scrollPush * 0.25,
+        -0.4 - scrollPush * 1.1,
+      ]);
 
-    for (const layer of layers) {
-      layer.mesh.position.z = layer.baseZ + scrollPush * 0.35;
-      layer.mesh.rotation.z = sway * 0.08;
+      for (const layer of layers) {
+        layer.mesh.position.z = layer.baseZ + scrollPush * 0.4;
+        layer.mesh.rotation.z = sway * 0.04;
+      }
+
+      renderer.render({ scene, camera });
+    } catch {
+      failed = true;
+      pause();
+      teardownCanvas();
     }
-
-    renderer.render({ scene, camera });
   };
 
   const play = () => {
-    if (running || !visible || !pageVisible) return;
+    if (running || failed || !visible || !pageVisible) return;
     running = true;
     raf = requestAnimationFrame(frame);
   };
@@ -222,8 +249,20 @@ export function mountHeroScene(stage: HTMLElement): () => void {
   window.addEventListener('resize', resize, { passive: true });
   window.addEventListener('scroll', onScroll, { passive: true });
   document.addEventListener('visibilitychange', onVisibility);
-  stage.classList.add('hero__stage--live');
-  play();
+
+  // Класс live — только после первого удачного кадра
+  requestAnimationFrame((t) => {
+    if (failed) return;
+    try {
+      renderer.render({ scene, camera });
+      stage.classList.add('hero__stage--live');
+      play();
+    } catch {
+      failed = true;
+      teardownCanvas();
+    }
+    void t;
+  });
 
   return () => {
     pause();
@@ -231,8 +270,7 @@ export function mountHeroScene(stage: HTMLElement): () => void {
     window.removeEventListener('resize', resize);
     window.removeEventListener('scroll', onScroll);
     document.removeEventListener('visibilitychange', onVisibility);
-    stage.classList.remove('hero__stage--live');
-    gl.canvas.remove();
+    teardownCanvas();
     const ext = gl.getExtension('WEBGL_lose_context');
     ext?.loseContext();
   };
