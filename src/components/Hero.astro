@@ -3,17 +3,7 @@ import { site } from '../data/site';
 ---
 
 <header class="band hero">
-  <div class="hero__stage" data-hero-stage aria-hidden="true">
-    <img
-      class="hero__fallback"
-      src="/hero-fallback.svg"
-      alt=""
-      width="1200"
-      height="900"
-      decoding="async"
-    />
-    <div class="hero__canvas-host" data-hero-canvas-host></div>
-  </div>
+  <div class="hero-texture" aria-hidden="true"></div>
 
   <div class="band__inner hero__content">
     <p class="note hero__rail">
@@ -23,42 +13,18 @@ import { site } from '../data/site';
 
     <div class="hero__body">
       <h1 class="hero__title">
-        <span class="mask mask--a"><span class="hero__name">{site.name}</span></span>
-        <span class="mask mask--b"><span class="hero__claim">{site.claim}</span></span>
+        <span class="hero__name">{site.name}</span>
+        <span class="hero__claim">{site.claim}</span>
       </h1>
 
-      <svg
-        class="hero__pen"
-        viewBox="0 0 600 10"
-        width="600"
-        height="10"
-        fill="none"
-        aria-hidden="true"
-        focusable="false"
-      >
-        <path
-          d="M1 7 C 96 3.4, 168 7.6, 258 5 S 430 3.2, 520 6.2 599 4.4, 599 4.4"
-          pathLength="1"
-          stroke="var(--plotter)"
-          stroke-width="2"
-          stroke-linecap="round"
-          vector-effect="non-scaling-stroke"
-        ></path>
-      </svg>
+      <span class="hero__rule" aria-hidden="true"></span>
 
-      <p class="mask mask--c">
-        <span class="hero__lead">{site.subclaim}</span>
+      <p class="hero__lead">{site.subclaim}</p>
+
+      <p class="hero__links">
+        <a class="link" href={`mailto:${site.email}`}>Написать на почту</a>
+        <a class="link" href={site.telegram} rel="me noopener">Telegram</a>
       </p>
-
-      <div class="mask mask--d">
-        <div class="hero__foot">
-          <p class="note hero__exp">{site.experienceLabel} в коммерческой разработке</p>
-          <p class="hero__links">
-            <a class="link" href={`mailto:${site.email}`}>Написать на почту</a>
-            <a class="link" href={site.telegram} rel="me noopener">Telegram</a>
-          </p>
-        </div>
-      </div>
     </div>
   </div>
 </header>
@@ -83,101 +49,26 @@ import { site } from '../data/site';
   })();
 </script>
 
-<script>
-  const stage = document.querySelector<HTMLElement>('[data-hero-stage]');
-  if (stage) {
-    const boot = () => {
-      import('../scripts/hero-scene')
-        .then(({ mountHeroScene }) => {
-          try {
-            mountHeroScene(stage);
-          } catch {
-            /* SVG-фолбэк уже на экране */
-          }
-        })
-        .catch(() => {});
-    };
-
-    if ('requestIdleCallback' in window) {
-      requestIdleCallback(boot, { timeout: 1800 });
-    } else {
-      setTimeout(boot, 1);
-    }
-  }
-</script>
-
 <style>
   .hero {
     position: relative;
-    isolation: isolate;
-    overflow: clip;
-    min-height: min(100svh, 920px);
+    overflow: hidden;
   }
 
-  .hero__stage {
+  .hero-texture {
     position: absolute;
     inset: 0;
-    z-index: 0;
     pointer-events: none;
-    overflow: hidden;
+    background-image:
+      linear-gradient(to right, var(--texture-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--texture-line) 1px, transparent 1px);
+    background-size: 34px 34px;
+    -webkit-mask-image: radial-gradient(120% 90% at 15% 0%, #000 0%, transparent 78%);
+    mask-image: radial-gradient(120% 90% at 15% 0%, #000 0%, transparent 78%);
   }
 
   .hero__content {
     position: relative;
-    z-index: 1;
-  }
-
-  .hero__canvas-host {
-    position: absolute;
-    inset: 0;
-  }
-
-  /* Мобильный: сцена в нижних ~42%, мягкий вход сверху без жёсткого обреза сетки */
-  @media (max-width: 767px) {
-    .hero__canvas-host,
-    .hero__fallback {
-      top: 55%;
-      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 22%);
-      mask-image: linear-gradient(to bottom, transparent 0%, #000 22%);
-    }
-  }
-
-  .hero__canvas {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    display: block;
-    opacity: 0;
-    transition: opacity 0.6s ease;
-  }
-
-  .hero__stage--live .hero__canvas {
-    opacity: 1;
-  }
-
-  .hero__fallback {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center 40%;
-    opacity: 1;
-    transition: opacity 0.5s ease;
-  }
-
-  .hero__stage--live .hero__fallback {
-    opacity: 0;
-  }
-
-  html[data-theme='dark'] .hero__fallback {
-    filter: invert(1) hue-rotate(180deg) brightness(0.95);
-    opacity: 0.55;
-  }
-
-  html[data-theme='dark'] .hero__stage--live .hero__fallback {
-    opacity: 0;
   }
 
   .hero__rail {
@@ -200,40 +91,9 @@ import { site } from '../data/site';
     }
   }
 
-  .mask {
-    display: block;
-    overflow: hidden;
-    padding-bottom: 0.14em;
-    margin-bottom: -0.14em;
-  }
-
-  .mask > * {
-    transform: translateY(110%);
-    animation: rise 0.66s cubic-bezier(0.22, 0.68, 0.16, 1) forwards;
-  }
-
-  .mask--a > * {
-    animation-delay: 0.04s;
-  }
-  .mask--b > * {
-    animation-delay: 0.15s;
-  }
-  .mask--c > * {
-    animation-delay: 0.3s;
-  }
-  .mask--d > * {
-    animation-delay: 0.4s;
-  }
-
-  @keyframes rise {
-    to {
-      transform: translateY(0);
-    }
-  }
-
   .hero__title {
     display: grid;
-    gap: 10px;
+    gap: 8px;
   }
 
   .hero__name {
@@ -246,63 +106,35 @@ import { site } from '../data/site';
 
   .hero__claim {
     display: block;
-    font-size: clamp(2.625rem, 12.5vw, 5.75rem);
+    font-size: clamp(2.5rem, 11.5vw, 5.5rem);
     font-weight: 800;
-    line-height: 0.94;
-    letter-spacing: -0.038em;
+    line-height: 1.03;
+    letter-spacing: -0.025em;
   }
 
-  .hero__pen {
-    width: 100%;
-    height: auto;
-    margin-top: 14px;
-  }
-
-  .hero__pen path {
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-    animation: pen 0.62s cubic-bezier(0.35, 0, 0.2, 1) 0.52s forwards;
+  .hero__rule {
+    display: block;
+    width: 44px;
+    height: 2px;
+    margin-top: 16px;
+    background: var(--plotter);
   }
 
   .hero__lead {
-    display: block;
+    margin-top: 28px;
+    max-width: 44ch;
     font-size: clamp(1.0625rem, 4vw, 1.25rem);
     line-height: 1.45;
-    margin-top: 22px;
-    max-width: 44ch;
-  }
-
-  .hero__foot {
-    display: grid;
-    gap: 22px;
-    margin-top: 36px;
   }
 
   .hero__links {
     display: flex;
     flex-wrap: wrap;
     gap: 12px 26px;
+    margin-top: 28px;
   }
 
   .hero__links .link {
     font-size: 0.9375rem;
-  }
-
-  @keyframes pen {
-    to {
-      stroke-dashoffset: 0;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .mask > * {
-      transform: none;
-      animation: none;
-    }
-
-    .hero__pen path {
-      stroke-dashoffset: 0;
-      animation: none;
-    }
   }
 </style>

@@ -71,6 +71,8 @@
   --paper-2: #f1f4f2;
   --ink: #15201e;
   --graphite: #5a6764;
+  --text-muted: var(--graphite);
+  --texture-line: rgba(0, 0, 0, 0.05);
   --rule: #c6cfcb;
   --plotter: #c42d18;
   --plotter-lit: #f0552f;
@@ -94,6 +96,7 @@ html[data-theme='dark'] {
   --paper-2: #1a2321;
   --ink: #e6ebe8;
   --graphite: #9aa8a4;
+  --texture-line: rgba(255, 255, 255, 0.055);
   --rule: #2e3a37;
   --plotter: #e24a32;
   --plotter-lit: #f07058;
