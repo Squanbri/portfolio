@@ -161,27 +161,32 @@ const fallbackPlanes = [0, 1, 2, 3, 4, 5];
 
   .hero__stack {
     position: relative;
-    width: min(78vw, 640px);
-    aspect-ratio: 4 / 3;
+    width: min(72vw, 560px);
+    aspect-ratio: 3 / 2;
     transform-style: preserve-3d;
-    transform: rotateX(56deg) rotateZ(-4deg);
+    transform: rotateX(36deg) rotateY(-18deg) rotateZ(-2deg);
+    margin-left: 12vw;
   }
 
   .hero__plane {
     position: absolute;
     inset: 0;
-    border: 1px solid color-mix(in srgb, var(--plotter) 42%, var(--rule));
-    background-color: color-mix(in srgb, var(--paper-2) 72%, transparent);
+    border: 1px solid color-mix(in srgb, var(--plotter) 48%, var(--rule));
+    background-color: color-mix(in srgb, var(--paper-2) 55%, transparent);
     background-image:
-      linear-gradient(to right, color-mix(in srgb, var(--graphite) 28%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in srgb, var(--graphite) 28%, transparent) 1px, transparent 1px);
-    background-size: 10% 10%;
-    transform: translate3d(0, calc(var(--i) * 10px), calc(var(--i) * -52px));
-    opacity: calc(0.78 - var(--i) * 0.1);
+      linear-gradient(to right, color-mix(in srgb, var(--graphite) 34%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in srgb, var(--graphite) 34%, transparent) 1px, transparent 1px);
+    background-size: 12.5% 12.5%;
+    transform: translate3d(
+      calc(var(--i) * 8px),
+      calc(var(--i) * -6px),
+      calc(var(--i) * -58px)
+    );
+    opacity: calc(0.86 - var(--i) * 0.1);
   }
 
   .hero__plane:nth-child(1) {
-    border-color: color-mix(in srgb, var(--plotter) 70%, var(--rule));
+    border-color: color-mix(in srgb, var(--plotter) 78%, var(--rule));
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -193,10 +198,10 @@ const fallbackPlanes = [0, 1, 2, 3, 4, 5];
   @keyframes stack-drift {
     0%,
     100% {
-      transform: rotateX(56deg) rotateZ(-4deg) translateY(0);
+      transform: rotateX(36deg) rotateY(-18deg) rotateZ(-2deg) translateY(0);
     }
     50% {
-      transform: rotateX(52deg) rotateZ(1deg) translateY(10px);
+      transform: rotateX(32deg) rotateY(-12deg) rotateZ(1deg) translateY(8px);
     }
   }
 

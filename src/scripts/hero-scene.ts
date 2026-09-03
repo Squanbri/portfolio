@@ -104,22 +104,23 @@ export function mountHeroScene(stage: HTMLElement): () => void {
   host.appendChild(gl.canvas);
   gl.canvas.className = 'hero__canvas';
 
-  const camera = new Camera(gl, { fov: 38, near: 0.1, far: 40 });
-  camera.position.set(0.15, 1.55, 4.6);
-  camera.lookAt([0, -0.1, -0.4]);
+  const camera = new Camera(gl, { fov: 36, near: 0.1, far: 40 });
+  camera.position.set(1.35, 1.1, 3.8);
+  camera.lookAt([-0.2, 0.05, -0.8]);
 
   const scene = new Transform();
-  const geometry = new Plane(gl, { width: 2.6, height: 1.85 });
+  const geometry = new Plane(gl, { width: 2.35, height: 1.55 });
 
-  const layers: { mesh: Mesh; baseZ: number }[] = [];
+  const layers: { mesh: Mesh; baseZ: number; baseX: number; baseY: number }[] =
+    [];
 
   for (let i = 0; i < LAYER_COUNT; i++) {
     const depth = i / (LAYER_COUNT - 1);
     const near = 1 - depth;
     const line = new Color(
-      plotter[0] * near + graphite[0] * depth,
-      plotter[1] * near + graphite[1] * depth,
-      plotter[2] * near + graphite[2] * depth
+      plotter[0] * (0.55 + near * 0.45) + graphite[0] * depth * 0.35,
+      plotter[1] * (0.55 + near * 0.45) + graphite[1] * depth * 0.35,
+      plotter[2] * (0.55 + near * 0.45) + graphite[2] * depth * 0.35
     );
 
     const program = new Program(gl, {
@@ -133,13 +134,13 @@ export function mountHeroScene(stage: HTMLElement): () => void {
         uLine: { value: line },
         uFill: {
           value: new Color(
-            paper[0] * 0.88 + ink[0] * 0.12,
-            paper[1] * 0.88 + ink[1] * 0.12,
-            paper[2] * 0.88 + ink[2] * 0.12
+            paper[0] * 0.82 + ink[0] * 0.18,
+            paper[1] * 0.82 + ink[1] * 0.18,
+            paper[2] * 0.82 + ink[2] * 0.18
           ),
         },
-        uAlpha: { value: 0.82 - depth * 0.55 },
-        uGrid: { value: 9 },
+        uAlpha: { value: 0.9 - depth * 0.58 },
+        uGrid: { value: 8 },
       },
     });
 
@@ -149,11 +150,15 @@ export function mountHeroScene(stage: HTMLElement): () => void {
     }
 
     const mesh = new Mesh(gl, { geometry, program });
-    const baseZ = -i * 0.52;
-    mesh.position.set(0, -0.2 - i * 0.05, baseZ);
-    mesh.rotation.x = -0.98;
+    const baseZ = -i * 0.72;
+    const baseX = -0.15 + i * 0.06;
+    const baseY = 0.15 - i * 0.08;
+    mesh.position.set(baseX, baseY, baseZ);
+    // Меньший наклон: читаются как стопка панелей, а не как пол
+    mesh.rotation.x = -0.62;
+    mesh.rotation.y = 0.28;
     mesh.setParent(scene);
-    layers.push({ mesh, baseZ });
+    layers.push({ mesh, baseZ, baseX, baseY });
   }
 
   let raf = 0;
@@ -191,18 +196,20 @@ export function mountHeroScene(stage: HTMLElement): () => void {
       const drift = Math.sin(phase * Math.PI * 2);
       const sway = Math.cos(phase * Math.PI * 2);
 
-      camera.position.x = 0.15 + sway * 0.22;
-      camera.position.y = 1.55 + drift * 0.12;
-      camera.position.z = 4.6 - scrollPush * 2.8;
+      camera.position.x = 1.35 + sway * 0.35;
+      camera.position.y = 1.1 + drift * 0.18;
+      camera.position.z = 3.8 - scrollPush * 2.6;
       camera.lookAt([
-        sway * 0.08,
-        -0.1 - scrollPush * 0.25,
-        -0.4 - scrollPush * 1.1,
+        -0.2 + sway * 0.1,
+        0.05 - scrollPush * 0.2,
+        -0.8 - scrollPush * 1.2,
       ]);
 
       for (const layer of layers) {
-        layer.mesh.position.z = layer.baseZ + scrollPush * 0.4;
-        layer.mesh.rotation.z = sway * 0.04;
+        layer.mesh.position.x = layer.baseX + sway * 0.04;
+        layer.mesh.position.y = layer.baseY + drift * 0.03;
+        layer.mesh.position.z = layer.baseZ + scrollPush * 0.55;
+        layer.mesh.rotation.z = sway * 0.03;
       }
 
       renderer.render({ scene, camera });
