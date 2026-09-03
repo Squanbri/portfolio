@@ -41,7 +41,29 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:locale" content="ru_RU" />
-    <meta name="theme-color" content="#e6eae8" />
+    <meta name="theme-color" content="#e6eae8" data-theme-color />
+
+    <script is:inline>
+      (() => {
+        try {
+          const saved = localStorage.getItem('theme');
+          const theme =
+            saved === 'dark' || saved === 'light'
+              ? saved
+              : matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
+          document.documentElement.setAttribute('data-theme', theme);
+          const meta = document.querySelector('[data-theme-color]');
+          if (meta) {
+            meta.setAttribute(
+              'content',
+              theme === 'dark' ? '#121a18' : '#e6eae8'
+            );
+          }
+        } catch {}
+      })();
+    </script>
 
     {/* fallback="none": где View Transitions нет, браузер просто уходит по
         ссылке. Астровская эмуляция перехода на JS нам не нужна. */}
@@ -50,9 +72,118 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   <body>
     <a class="skip" href="#main">Перейти к содержимому</a>
     <div class="sheet">
+      <div class="sheet__bar">
+        <button
+          type="button"
+          class="theme-toggle"
+          data-theme-toggle
+          aria-label="Переключить тему"
+        >
+          Тема
+        </button>
+      </div>
       <main id="main">
         <slot />
       </main>
     </div>
+
+    <script>
+      const button = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
+      const meta = document.querySelector<HTMLMetaElement>('[data-theme-color]');
+
+      const apply = (theme: 'light' | 'dark') => {
+        document.documentElement.setAttribute('data-theme', theme);
+        try {
+          localStorage.setItem('theme', theme);
+        } catch {}
+        if (meta) {
+          meta.content = theme === 'dark' ? '#121a18' : '#e6eae8';
+        }
+      };
+
+      const toggle = (event: MouseEvent) => {
+        const next =
+          document.documentElement.getAttribute('data-theme') === 'dark'
+            ? 'light'
+            : 'dark';
+
+        const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const vt = (
+          document as Document & {
+            startViewTransition?: (cb: () => void) => void;
+          }
+        ).startViewTransition;
+
+        if (!vt || reduce) {
+          apply(next);
+          return;
+        }
+
+        const x = event.clientX;
+        const y = event.clientY;
+        const maxX = Math.max(x, window.innerWidth - x);
+        const maxY = Math.max(y, window.innerHeight - y);
+        const radius = Math.hypot(maxX, maxY);
+
+        document.documentElement.style.setProperty('--theme-x', `${x}px`);
+        document.documentElement.style.setProperty('--theme-y', `${y}px`);
+        document.documentElement.style.setProperty('--theme-r', `${radius}px`);
+
+        vt.call(document, () => apply(next));
+      };
+
+      button?.addEventListener('click', toggle);
+    </script>
   </body>
 </html>
+
+<style is:global>
+  .sheet__bar {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px var(--pad) 0;
+    border-bottom: var(--hair);
+  }
+
+  .theme-toggle {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--graphite);
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 1px;
+  }
+
+  .theme-toggle:hover,
+  .theme-toggle:active {
+    color: var(--plotter);
+    border-bottom-color: var(--plotter);
+  }
+
+  @supports (view-transition-name: root) {
+    @media (prefers-reduced-motion: no-preference) {
+      ::view-transition-old(root),
+      ::view-transition-new(root) {
+        animation: none;
+        mix-blend-mode: normal;
+      }
+
+      ::view-transition-old(root) {
+        z-index: 1;
+      }
+
+      ::view-transition-new(root) {
+        z-index: 2;
+        animation: theme-circle 0.55s ease-out;
+      }
+
+      @keyframes theme-circle {
+        from {
+          clip-path: circle(0 at var(--theme-x) var(--theme-y));
+        }
+        to {
+          clip-path: circle(var(--theme-r) at var(--theme-x) var(--theme-y));
+        }
+      }
+    }
+  }
+</style>

@@ -1,0 +1,58 @@
+---
+import { site } from '../data/site';
+---
+
+<section class="band" aria-labelledby="profile-title">
+  <div class="band__inner">
+    <p class="note">
+      <b>Профиль</b>
+      {site.city}
+    </p>
+
+    <div class="profile">
+      <h2 id="profile-title">О себе</h2>
+      <div class="profile__row">
+        <img
+          class="profile__photo"
+          src={site.photo}
+          alt={site.name}
+          width="120"
+          height="120"
+          loading="lazy"
+          decoding="async"
+        />
+        <p class="profile__text">{site.profile}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .profile__row {
+    display: grid;
+    gap: 18px;
+    margin-top: 18px;
+    align-items: start;
+    max-width: 58ch;
+  }
+
+  .profile__photo {
+    width: 88px;
+    height: 88px;
+    object-fit: cover;
+    border: var(--hair);
+  }
+
+  .profile__text {
+    font-size: 1.0625rem;
+    line-height: 1.5;
+  }
+
+  @media (min-width: 640px) {
+    .profile__row {
+      grid-template-columns: 88px minmax(0, 1fr);
+      gap: 22px;
+      align-items: center;
+    }
+  }
+</style>

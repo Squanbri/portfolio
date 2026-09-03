@@ -1,17 +1,22 @@
 export const site = {
   name: 'Евгений Маркитан',
-  claim: 'Собираю продукты целиком',
+  claim: 'От интерфейса до базы данных',
   subclaim:
-    'Интерфейс, API, фоновая обработка, хранение данных — довожу до работающего приложения сам, без передачи по цепочке.',
+    'Шесть лет коммерческой разработки. Умею и написать экран, и спроектировать то, что под ним.',
+  /** Фиксированная формулировка стажа для подписей и meta — не округление из дат. */
+  experienceLabel: 'шесть лет',
   city: 'Тверь',
   timeZone: 'Europe/Moscow',
-  email: 'evgeniy-markitan@yandex.ru',
+  email: 'squanbri@gmail.com',
   telegram: 'https://t.me/squanbri',
   telegramLabel: '@squanbri',
   github: 'https://github.com/Squanbri',
   githubLabel: 'Squanbri',
   resume:
     'https://drive.google.com/file/d/1F5ZR29hv6FT0j-TfnhzliNH7Cbo4E9Da/view?usp=sharing',
+  profile:
+    'Пишу коммерческие продукты целиком: интерфейс, API, фоновую обработку и хранение. Нативные модули для React Native — обычная часть работы.',
+  photo: '/images/avatar.png',
 };
 
 export type Job = {
@@ -41,7 +46,7 @@ export const jobs: Job[] = [
     to: '2023-10',
     period: 'июль 2022 — октябрь 2023',
     result:
-      'Перевёл работу с камерами на потоки RxJS: сотни коротких параллельных запросов перестали ронять интерфейс, а разметка зон на живом видео стала выдерживать длинные смены без утечек подписок.',
+      'Интерфейс видеоаналитики: разметка зон поверх живого потока с камер, HLS в браузере, сотни коротких параллельных запросов через RxJS. Основная работа была в том, чтобы это выдерживало длинную смену без утечек подписок и лишних ре-рендеров.',
   },
   {
     company: 'Lazur Media',
@@ -50,35 +55,9 @@ export const jobs: Job[] = [
     to: '2022-07',
     period: 'октябрь 2020 — июль 2022',
     result:
-      'Закрывал фичи от таблиц в базе до экрана: API на Laravel и Rails, фоновые задачи, интерфейсы на Vue и React. Здесь и появилась привычка не останавливаться на границе клиента.',
+      'Закрывал задачи от таблиц в базе до интерфейса: API на Laravel и Rails, фоновая обработка, клиент на Vue и React.',
   },
 ];
-
-function monthsBetween(from: string, to: string) {
-  const [fy, fm] = from.split('-').map(Number);
-  const [ty, tm] = to.split('-').map(Number);
-  return (ty - fy) * 12 + (tm - fm);
-}
-
-function plural(n: number, forms: [string, string, string]) {
-  const mod10 = n % 10;
-  const mod100 = n % 100;
-  if (mod10 === 1 && mod100 !== 11) return forms[0];
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return forms[1];
-  return forms[2];
-}
-
-/** Суммарный стаж считается из дат работы, чтобы не протухал в тексте. */
-export function totalExperience() {
-  const starts = jobs.map((j) => j.from).sort();
-  const ends = jobs.map((j) => j.to).sort();
-  const months = monthsBetween(starts[0], ends[ends.length - 1]);
-  const years = Math.floor(months / 12);
-  const rest = months % 12;
-  const yearsText = `${years} ${plural(years, ['год', 'года', 'лет'])}`;
-  if (!rest) return yearsText;
-  return `${yearsText} ${rest} ${plural(rest, ['месяц', 'месяца', 'месяцев'])}`;
-}
 
 export function updatedAt() {
   const now = new Date();

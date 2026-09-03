@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
 import Chain from './Chain.astro';
 
 interface Props {
@@ -7,6 +8,8 @@ interface Props {
 }
 
 const { items } = Astro.props;
+
+const offlineSlugs = new Set(['letter-box', 'screen-translator']);
 ---
 
 <section class="band" aria-labelledby="projects-title">
@@ -18,33 +21,101 @@ const { items } = Astro.props;
 
     <div class="projects">
       <span class="projects__pen" aria-hidden="true"></span>
-      <h2 id="projects-title">Что я собрал</h2>
+      <h2 id="projects-title">Проекты</h2>
 
       <ul class="projects__list">
         {
-          items.map((project) => (
-            <li class="card">
-              <p class="note card__note">
-                <b>{project.data.year}</b>
-                {project.data.kind}
-              </p>
-              <h3
-                class="card__title"
-                style={`view-transition-name: p-${project.id}`}
-              >
-                <a class="card__link" href={`/projects/${project.id}/`}>
-                  {project.data.title}
-                </a>
-              </h3>
-              <p class="card__text">{project.data.tagline}</p>
-              <Chain items={project.data.stack} />
-            </li>
-          ))
+          items.map((project) => {
+            const cover = project.data.shots[0];
+            const video = project.data.previewVideo;
+            const offline = offlineSlugs.has(project.id);
+
+            return (
+              <li class="card" data-project-card>
+                <div
+                  class="card__frame"
+                  style={`view-transition-name: p-${project.id}`}
+                >
+                  {cover && (
+                    <div class="card__viewport">
+                      {video ? (
+                        <video
+                          class="card__media"
+                          muted
+                          loop
+                          playsinline
+                          preload="none"
+                          data-preview-video
+                          aria-label={cover.alt}
+                        >
+                          {video.webm && (
+                            <source src={video.webm} type="video/webm" />
+                          )}
+                          {video.mp4 && (
+                            <source src={video.mp4} type="video/mp4" />
+                          )}
+                        </video>
+                      ) : null}
+                      <Image
+                        class:list={['card__media', video && 'card__media--poster']}
+                        src={cover.src}
+                        alt={cover.alt}
+                        widths={[480, 720, 960]}
+                        sizes="(min-width: 900px) 420px, 88vw"
+                        format="webp"
+                        quality={68}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <p class="note card__note">
+                  <b>{project.data.year}</b>
+                  {project.data.kind}
+                  {offline && <span class="card__badge">работает офлайн</span>}
+                </p>
+                <h3 class="card__title">
+                  <a class="card__link" href={`/projects/${project.id}/`}>
+                    {project.data.title}
+                  </a>
+                </h3>
+                <p class="card__text">{project.data.tagline}</p>
+                <Chain items={project.data.stack} />
+              </li>
+            );
+          })
         }
       </ul>
     </div>
   </div>
 </section>
+
+<script>
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const cards = document.querySelectorAll<HTMLElement>('[data-project-card]');
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        const card = entry.target as HTMLElement;
+        card.classList.toggle('card--active', entry.isIntersecting);
+
+        const video = card.querySelector<HTMLVideoElement>('[data-preview-video]');
+        if (!video || reduce) continue;
+        if (entry.isIntersecting) {
+          void video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      }
+    },
+    { threshold: 0.55, rootMargin: '0px' }
+  );
+
+  cards.forEach((card) => io.observe(card));
+</script>
 
 <style>
   .projects {
@@ -58,7 +129,6 @@ const { items } = Astro.props;
     }
   }
 
-  /* Выносная линия: прочерчивается по мере прокрутки, без JS */
   .projects__pen {
     position: absolute;
     left: 0;
@@ -73,8 +143,6 @@ const { items } = Astro.props;
       .projects__pen {
         transform: scaleY(0);
         transform-origin: top center;
-        /* Только лонгханды: шорткат animation сбрасывает duration в 0s,
-           и по прогресс-таймлайну линия так и остаётся непрочерченной. */
         animation-name: pen-down;
         animation-duration: auto;
         animation-timing-function: linear;
@@ -98,9 +166,9 @@ const { items } = Astro.props;
   .card {
     position: relative;
     display: grid;
-    gap: 9px;
+    gap: 12px;
     border: var(--hair);
-    padding: 18px 16px 20px;
+    padding: 16px;
   }
 
   .card + .card {
@@ -109,18 +177,62 @@ const { items } = Astro.props;
 
   @media (min-width: 900px) {
     .card {
-      padding: 24px;
+      padding: 20px;
+      gap: 14px;
     }
+  }
+
+  .card__frame {
+    background: color-mix(in srgb, var(--ink) 6%, var(--paper-2));
+    border: var(--hair);
+    padding: 10px;
+  }
+
+  .card__viewport {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: var(--ink);
+  }
+
+  .card__media {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    filter: saturate(0.72) contrast(0.96) brightness(0.94)
+      sepia(0.12);
+    transition: filter 0.35s ease;
+  }
+
+  .card__media--poster {
+    position: absolute;
+    inset: 0;
+  }
+
+  video.card__media:not([data-playing]) + .card__media--poster {
+    z-index: 1;
+  }
+
+  .card:hover .card__media,
+  .card:focus-within .card__media,
+  .card--active .card__media {
+    filter: none;
   }
 
   .card__note {
     display: flex;
     flex-wrap: wrap;
     gap: 0 10px;
+    align-items: baseline;
   }
 
   .card__note b {
     display: inline;
+  }
+
+  .card__badge {
+    color: var(--plotter);
   }
 
   .card__title {
@@ -132,7 +244,6 @@ const { items } = Astro.props;
     text-decoration: none;
   }
 
-  /* Ссылка растягивается на всю карточку, но фокус остаётся на тексте */
   .card__link::after {
     content: '';
     position: absolute;

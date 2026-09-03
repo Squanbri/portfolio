@@ -1,0 +1,217 @@
+---
+const levels = [
+  {
+    title: 'Интерфейс',
+    detail: 'React, React Native, Electron',
+  },
+  {
+    title: 'Данные на клиенте',
+    detail: 'состояние, потоки, офлайн-режим',
+  },
+  {
+    title: 'API',
+    detail: 'NestJS, Laravel, Rails, FastAPI',
+  },
+  {
+    title: 'Фоновая обработка',
+    detail: 'очереди, воркеры, синхронизация',
+  },
+  {
+    title: 'Хранение',
+    detail: 'PostgreSQL, SQLite, Redis',
+  },
+  {
+    title: 'Нативный слой',
+    detail: 'модули на Swift и Kotlin',
+  },
+];
+---
+
+<section class="band depth" aria-labelledby="depth-title">
+  <div class="band__inner">
+    <p class="note">
+      <b>Стек</b>
+      разрез сверху вниз
+    </p>
+
+    <div class="depth__body">
+      <h2 id="depth-title">Я работаю на всю глубину</h2>
+      <p class="lead depth__lead">
+        Не заканчиваю на границе клиента и не начинаю с неё.
+      </p>
+
+      <div class="depth__cut">
+        <span class="depth__probe" aria-hidden="true"></span>
+        <ol class="depth__levels">
+          {
+            levels.map((level, index) => (
+              <li class="depth__level" style={`--i: ${index}`}>
+                <span class="depth__tick" aria-hidden="true"></span>
+                <div class="depth__copy">
+                  <h3>{level.title}</h3>
+                  <p>{level.detail}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .depth__lead {
+    margin-top: 12px;
+  }
+
+  .depth__cut {
+    position: relative;
+    margin: 34px 0 0;
+    padding: 0 0 0 28px;
+  }
+
+  .depth__levels {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0;
+  }
+
+  .depth__probe {
+    position: absolute;
+    left: 7px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--plotter);
+    transform-origin: top center;
+  }
+
+  .depth__level {
+    position: relative;
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr);
+    gap: 0 14px;
+    align-items: stretch;
+    min-height: 64px;
+    border-top: var(--hair);
+    padding: 16px 0 16px 0;
+  }
+
+  .depth__level:last-child {
+    border-bottom: var(--hair);
+  }
+
+  .depth__tick {
+    width: 18px;
+    height: 1px;
+    margin-top: 0.85em;
+    background: var(--rule);
+    justify-self: start;
+  }
+
+  .depth__copy h3 {
+    font-size: 1.0625rem;
+    font-weight: 600;
+  }
+
+  .depth__copy p {
+    margin-top: 4px;
+    color: var(--graphite);
+    font-size: 0.9375rem;
+  }
+
+  /* Без animation-timeline: все уровни уже «пройдены» */
+  .depth__level {
+    opacity: 1;
+  }
+
+  .depth__tick {
+    background: var(--plotter);
+  }
+
+  .depth__copy h3 {
+    color: var(--ink);
+  }
+
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .depth__probe {
+        transform: scaleY(0);
+        animation-name: depth-probe;
+        animation-duration: auto;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range: cover 8% cover 88%;
+      }
+
+      .depth__level {
+        opacity: 0.42;
+        animation-name: depth-mark;
+        animation-duration: auto;
+        animation-timing-function: steps(1, end);
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range: entry 40% cover 70%;
+      }
+
+      .depth__level .depth__tick {
+        background: var(--rule);
+        animation-name: depth-tick;
+        animation-duration: auto;
+        animation-timing-function: steps(1, end);
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range: entry 40% cover 70%;
+      }
+
+      .depth__level .depth__copy h3 {
+        color: var(--graphite);
+        animation-name: depth-title;
+        animation-duration: auto;
+        animation-timing-function: steps(1, end);
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range: entry 40% cover 70%;
+      }
+    }
+  }
+
+  @keyframes depth-probe {
+    to {
+      transform: scaleY(1);
+    }
+  }
+
+  @keyframes depth-mark {
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes depth-tick {
+    to {
+      background: var(--plotter);
+    }
+  }
+
+  @keyframes depth-title {
+    to {
+      color: var(--ink);
+    }
+  }
+
+  @media (min-width: 900px) {
+    .depth__cut {
+      padding-left: 36px;
+    }
+
+    .depth__level {
+      min-height: 72px;
+      padding: 18px 0;
+    }
+  }
+</style>
