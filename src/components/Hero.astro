@@ -1,325 +1,205 @@
 ---
-import { site } from '../data/content';
+import { site, totalExperience } from '../data/site';
+
+const experience = totalExperience();
 ---
 
-<section class="hero section">
-  <div class="container hero-grid">
-    <div class="hero-copy">
-      <div class="identity">
-        <figure class="portrait">
-          <img
-            src={site.photo}
-            alt={`Фото: ${site.name}`}
-            width="480"
-            height="480"
-            loading="eager"
-            decoding="async"
-          />
-        </figure>
-        <div class="identity-text">
-          <p class="eyebrow mono">{site.role}</p>
-          <h1>{site.name}</h1>
+<header class="band hero">
+  <div class="band__inner">
+    <p class="note hero__rail">
+      <b>{site.city}</b>
+      <span data-clock>UTC+3</span>
+    </p>
+
+    <div class="hero__body">
+      <h1 class="hero__title">
+        <span class="mask mask--a"><span class="hero__name">{site.name}</span></span>
+        <span class="mask mask--b"><span class="hero__claim">{site.claim}</span></span>
+      </h1>
+
+      <svg
+        class="hero__pen"
+        viewBox="0 0 600 10"
+        width="600"
+        height="10"
+        fill="none"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <path
+          d="M1 7 C 96 3.4, 168 7.6, 258 5 S 430 3.2, 520 6.2 599 4.4, 599 4.4"
+          pathLength="1"
+          stroke="var(--plotter)"
+          stroke-width="2"
+          stroke-linecap="round"
+          vector-effect="non-scaling-stroke"
+        ></path>
+      </svg>
+
+      <p class="mask mask--c">
+        <span class="hero__lead">{site.subclaim}</span>
+      </p>
+
+      <div class="mask mask--d">
+        <div class="hero__foot">
+          <p class="note hero__exp">{experience} в коммерческой разработке</p>
+          <p class="hero__links">
+            <a class="link" href={`mailto:${site.email}`}>Написать на почту</a>
+            <a class="link" href={site.telegram} rel="me noopener">Telegram</a>
+          </p>
         </div>
-      </div>
-
-      <p class="lead">{site.tagline}</p>
-      <p class="focus mono">{site.focus}</p>
-
-      <div class="contacts">
-        <p class="contacts-row">
-          <a href={site.phoneHref}>{site.phone}</a>
-          <span class="sep" aria-hidden="true">·</span>
-          <a href={`mailto:${site.email}`}>{site.email}</a>
-        </p>
-        <p class="contacts-row links">
-          <a
-            href={site.links.hh}
-            rel="noopener noreferrer"
-            target="_blank">HH</a
-          >
-          <span class="sep" aria-hidden="true">·</span>
-          <a
-            href={site.links.telegram}
-            rel="noopener noreferrer"
-            target="_blank">Telegram</a
-          >
-          <span class="sep" aria-hidden="true">·</span>
-          <a
-            href={site.links.github}
-            rel="noopener noreferrer"
-            target="_blank">GitHub</a
-          >
-          {
-            site.links.resume && (
-              <>
-                <span class="sep" aria-hidden="true">
-                  ·
-                </span>
-                <a href={site.links.resume} target="_blank">
-                  Резюме PDF
-                </a>
-              </>
-            )
-          }
-        </p>
-      </div>
-    </div>
-
-    <div class="hero-visual">
-      <div class="terminal" aria-hidden="true">
-        <div class="terminal-bar">
-          <span class="dot red"></span>
-          <span class="dot yellow"></span>
-          <span class="dot green"></span>
-          <span class="terminal-title mono">zsh — portfolio</span>
-        </div>
-        <div class="terminal-body mono" data-terminal-log></div>
       </div>
     </div>
   </div>
-</section>
+</header>
+
+<script is:inline data-astro-rerun>
+  (() => {
+    const el = document.querySelector('[data-clock]');
+    if (!el) return;
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const fmt = new Intl.DateTimeFormat('ru-RU', {
+      timeZone: 'Europe/Moscow',
+      hour: '2-digit',
+      minute: '2-digit',
+      ...(still ? {} : { second: '2-digit' }),
+    });
+    const tick = () => {
+      el.textContent = fmt.format(new Date());
+    };
+    tick();
+    clearInterval(window.__clock);
+    if (!still) window.__clock = setInterval(tick, 1000);
+  })();
+</script>
 
 <style>
-  .hero {
-    position: relative;
-    isolation: isolate;
-    padding-top: clamp(2rem, 5vw, 3.25rem);
-    padding-bottom: clamp(2.5rem, 6vw, 4rem);
-  }
-
-  .hero-grid {
-    position: relative;
-    z-index: 1;
-    display: grid;
-    grid-template-columns: 1fr minmax(280px, 0.95fr);
-    gap: clamp(1.75rem, 4vw, 3.25rem);
-    align-items: center;
-  }
-
-  .identity {
+  .hero__rail {
     display: flex;
-    align-items: center;
-    gap: 1.1rem;
-    margin-bottom: 1.15rem;
+    gap: 0 10px;
   }
 
-  .portrait {
-    margin: 0;
-    flex: 0 0 auto;
-    width: clamp(84px, 12vw, 112px);
-    aspect-ratio: 1;
-    border-radius: 50%;
+  .hero__rail b {
+    display: inline;
+  }
+
+  @media (min-width: 900px) {
+    .hero__rail {
+      display: block;
+      padding-top: 0.7em;
+    }
+
+    .hero__rail b {
+      display: block;
+    }
+  }
+
+  /* Маска: строка выезжает из-под края, дескендеры не срезаются.
+     Раскладку содержимого маска не трогает — иначе перебила бы
+     собственные display у вложенных блоков. */
+  .mask {
+    display: block;
     overflow: hidden;
-    border: 2px solid color-mix(in srgb, var(--accent) 35%, var(--border));
-    background: var(--bg-elevated);
-    box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 10%, transparent);
+    padding-bottom: 0.14em;
+    margin-bottom: -0.14em;
   }
 
-  .portrait img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  .mask > * {
+    transform: translateY(110%);
+    animation: rise 0.66s cubic-bezier(0.22, 0.68, 0.16, 1) forwards;
   }
 
-  .identity-text {
-    min-width: 0;
+  .mask--a > * {
+    animation-delay: 0.04s;
+  }
+  .mask--b > * {
+    animation-delay: 0.15s;
+  }
+  .mask--c > * {
+    animation-delay: 0.3s;
+  }
+  .mask--d > * {
+    animation-delay: 0.4s;
   }
 
-  .eyebrow {
-    margin: 0 0 0.35rem;
-    color: var(--accent);
-    font-size: 0.85rem;
+  @keyframes rise {
+    to {
+      transform: translateY(0);
+    }
   }
 
-  h1 {
-    margin: 0;
-    font-size: clamp(1.85rem, 4.4vw, 2.75rem);
-    line-height: 1.12;
-    letter-spacing: -0.03em;
-    font-weight: 700;
-  }
-
-  .lead {
-    margin: 0 0 0.75rem;
-    color: var(--text-muted);
-    max-width: 36rem;
-    font-size: 1.08rem;
-  }
-
-  .focus {
-    margin: 0 0 0.9rem;
-    color: var(--accent);
-    max-width: 36rem;
-    font-size: 0.85rem;
-  }
-
-  .contacts {
-    margin: 0;
+  .hero__title {
     display: grid;
-    gap: 0.45rem;
+    gap: 10px;
   }
 
-  .contacts-row {
-    margin: 0;
-    color: var(--text-muted);
-    font-size: 0.95rem;
+  .hero__name {
+    display: block;
+    font-size: clamp(1.0625rem, 3.6vw, 1.25rem);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: var(--graphite);
+  }
+
+  .hero__claim {
+    display: block;
+    font-size: clamp(2.625rem, 12.5vw, 5.75rem);
+    font-weight: 800;
+    line-height: 0.94;
+    letter-spacing: -0.038em;
+  }
+
+  .hero__pen {
+    width: 100%;
+    height: auto;
+    margin-top: 14px;
+  }
+
+  .hero__pen path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: pen 0.62s cubic-bezier(0.35, 0, 0.2, 1) 0.52s forwards;
+  }
+
+  .hero__lead {
+    display: block;
+    font-size: clamp(1.0625rem, 4vw, 1.25rem);
+    line-height: 1.45;
+    margin-top: 22px;
+    max-width: 44ch;
+  }
+
+  .hero__foot {
+    display: grid;
+    gap: 22px;
+    margin-top: 36px;
+  }
+
+  .hero__links {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    gap: 0.35rem 0.5rem;
+    gap: 12px 26px;
   }
 
-  .contacts-row.links {
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
+  .hero__links .link {
+    font-size: 0.9375rem;
   }
 
-  .contacts a {
-    color: var(--text);
-    text-decoration: none;
-  }
-
-  .contacts a:hover {
-    color: var(--accent);
-  }
-
-  .contacts .sep {
-    opacity: 0.45;
-  }
-
-  .hero-visual {
-    min-width: 0;
-  }
-
-  .terminal {
-    width: 100%;
-    background: var(--terminal-bg);
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow:
-      0 18px 40px color-mix(in srgb, #000 18%, transparent),
-      0 0 0 1px color-mix(in srgb, var(--border) 50%, #000);
-    transform: rotate(-0.6deg);
-  }
-
-  .terminal-bar {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.65rem 0.85rem;
-    background: color-mix(in srgb, var(--terminal-bg) 80%, #000);
-  }
-
-  .dot {
-    width: 0.65rem;
-    height: 0.65rem;
-    border-radius: 50%;
-  }
-
-  .dot.red {
-    background: #ff5f56;
-  }
-
-  .dot.yellow {
-    background: #ffbd2e;
-  }
-
-  .dot.green {
-    background: #27c93f;
-  }
-
-  .terminal-title {
-    margin-left: auto;
-    color: var(--terminal-muted);
-    font-size: 0.75rem;
-  }
-
-  .terminal-body {
-    padding: 0.9rem 1rem 1.1rem;
-    color: var(--terminal-text);
-    height: 18rem;
-    overflow: hidden;
-    font-size: 0.78rem;
-    line-height: 1.45;
-  }
-
-  .terminal-body :global(.line) {
-    margin: 0 0 0.28rem;
-    white-space: pre-wrap;
-    word-break: break-word;
-  }
-
-  .terminal-body :global(.prompt) {
-    color: var(--cursor);
-    margin-right: 0.4rem;
-  }
-
-  .terminal-body :global(.cmd) {
-    color: #e8f5ec;
-  }
-
-  .terminal-body :global(.ok) {
-    color: #5ecf8a;
-  }
-
-  .terminal-body :global(.warn) {
-    color: #e6c35c;
-  }
-
-  .terminal-body :global(.err) {
-    color: #ff7b72;
-  }
-
-  .terminal-body :global(.muted) {
-    color: var(--terminal-muted);
-  }
-
-  .terminal-body :global(.dim) {
-    color: color-mix(in srgb, var(--terminal-muted) 75%, #fff);
-  }
-
-  .terminal-body :global(.cursor) {
-    display: inline-block;
-    width: 0.55ch;
-    height: 1.05em;
-    margin-left: 1px;
-    vertical-align: text-bottom;
-    background: var(--cursor);
-    animation: blink 1s steps(1) infinite;
-  }
-
-  @keyframes blink {
-    50% {
-      opacity: 0;
+  @keyframes pen {
+    to {
+      stroke-dashoffset: 0;
     }
   }
 
-  @media (max-width: 860px) {
-    .hero-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .terminal {
+  @media (prefers-reduced-motion: reduce) {
+    .mask > * {
       transform: none;
+      animation: none;
     }
 
-    .terminal-body {
-      height: 15rem;
-    }
-  }
-
-  @media (max-width: 520px) {
-    .identity {
-      gap: 0.85rem;
-    }
-
-    .portrait {
-      width: 76px;
-      box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 10%, transparent);
-    }
-
-    h1 {
-      font-size: clamp(1.65rem, 8vw, 2rem);
+    .hero__pen path {
+      stroke-dashoffset: 0;
+      animation: none;
     }
   }
 </style>

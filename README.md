@@ -1,21 +1,7 @@
 # Evgenii Markitan — Portfolio
 
-Personal software engineering portfolio built with Astro and TypeScript.
-
-The website presents my commercial experience, selected product work and personal projects. The focus is broader than frontend development: full-stack systems, backend architecture, desktop applications and mobile delivery.
-
-## Featured work
-
-- **Letter Box** — a self-hosted email client with a NestJS backend, background synchronization, Redis/BullMQ queues and optional local AI classification.
-- **Screen Translator** — a macOS desktop application for screen capture, OCR and offline translation.
-- **Commercial products** — selected React, React Native and Ruby on Rails projects with my responsibilities and technical contributions.
-
-## Stack
-
-- Astro
-- TypeScript
-- HTML and CSS
-- Static deployment
+Personal portfolio built with Astro. Static output, no runtime backend, deployed
+as plain files behind nginx.
 
 ## Local development
 
@@ -26,7 +12,7 @@ npm install
 npm run dev
 ```
 
-Production build:
+Production build and preview:
 
 ```bash
 npm run build
@@ -35,7 +21,43 @@ npm run preview
 
 ## Content
 
-Portfolio content is stored in `src/data/content.ts`. Static assets and project screenshots are located in `public/images/`.
+Project pages are generated from Markdown in `src/content/projects/`. The
+frontmatter schema lives in `src/content.config.ts`: stack chain, architecture
+layers and screenshots are structured data, the prose is the Markdown body.
+
+Everything else — name, contacts, jobs — is in `src/data/site.ts`. Total years of
+experience and the "updated" date are computed at build time so they never go
+stale in the copy.
+
+Project screenshots live in `src/assets/` and go through the Astro image
+pipeline, which emits sized WebP per breakpoint.
+
+Drop raw screenshots there and run `npm run shots:prepare` before committing: it
+caps them at 1600px and converts to WebP. This matters because Astro also copies
+the untouched original into `dist/`, even though no markup references it — a
+4000px PNG would ship as several megabytes of dead weight on every deploy.
+
+## Fonts
+
+Onest (headings and body) and IBM Plex Mono (annotations) are self-hosted as
+woff2 in `public/fonts/`, subset to Latin and Cyrillic. No requests to Google
+Fonts in production. Only the Onest subsets are preloaded — they carry the first
+screen.
+
+## Checks
+
+Both scripts need the site running (`npm run preview`) and Google Chrome
+installed at the default macOS path.
+
+```bash
+npm run audit:layout   # horizontal overflow at 320/390/1440, full-page screenshots into .shots/
+npm run audit:budget   # JS weight, view-transition names, no-JS render, reduced-motion, images
+npx astro check        # types
+```
+
+`audit:budget` is the guard rail for the two rules that are easy to break by
+accident: the JS budget and the requirement that the page stays readable with
+JavaScript disabled.
 
 ## Related repositories
 

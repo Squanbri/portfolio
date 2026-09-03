@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 # local raw dumps
 screenshots/
+
+# скриншоты из scripts/audit.mjs
+.shots/
