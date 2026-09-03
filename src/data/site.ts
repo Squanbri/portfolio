@@ -14,6 +14,9 @@ export const site = {
   githubLabel: 'Squanbri',
   resume:
     'https://drive.google.com/file/d/1F5ZR29hv6FT0j-TfnhzliNH7Cbo4E9Da/view?usp=sharing',
+  profile:
+    'Пишу коммерческие продукты целиком: интерфейс, API, фоновую обработку и хранение. Нативные модули для React Native — обычная часть работы.',
+  photo: '/images/avatar.png',
 };
 
 export type Job = {

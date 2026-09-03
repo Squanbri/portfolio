@@ -36,6 +36,13 @@ const projects = defineCollection({
       shots: z
         .array(z.object({ src: image(), alt: z.string() }))
         .default([]),
+      /** Короткие silent-превью для личных проектов; пути из public/ */
+      previewVideo: z
+        .object({
+          mp4: z.string().optional(),
+          webm: z.string().optional(),
+        })
+        .optional(),
     }),
 });
 
