@@ -29,6 +29,14 @@ function cssColor(name: string, fallback: string): CssRgb {
 const LAYER_COUNT = 6;
 /** Полный цикл idle-движения: медленно, но заметно глазу. */
 const CYCLE_MS = 32000;
+const PLANE_WIDTH = 1.25;
+const PLANE_HEIGHT = 0.7;
+const LAYER_STEP = 0.32;
+const CAMERA_DISTANCE = 5;
+const CAMERA_FOV = 32;
+/** Половина кадра по вертикали на расстоянии камеры — для вписывания сцены */
+const HALF_HEIGHT =
+  Math.tan(((CAMERA_FOV / 2) * Math.PI) / 180) * CAMERA_DISTANCE;
 
 const vertex = /* glsl */ `
   attribute vec3 position;
@@ -54,7 +62,7 @@ const fragment = /* glsl */ `
 
   float gridLine(vec2 uv, float cells) {
     vec2 cell = fract(uv * cells);
-    float thickness = 0.035;
+    float thickness = 0.02;
     float gx = min(cell.x, 1.0 - cell.x);
     float gy = min(cell.y, 1.0 - cell.y);
     float lineX = 1.0 - smoothstep(0.0, thickness, gx);
@@ -63,15 +71,15 @@ const fragment = /* glsl */ `
   }
 
   void main() {
-    float border = 0.018;
+    float border = 0.006;
     float frame = max(
       1.0 - smoothstep(0.0, border, min(vUv.x, 1.0 - vUv.x)),
       1.0 - smoothstep(0.0, border, min(vUv.y, 1.0 - vUv.y))
     );
     float grid = gridLine(vUv, uGrid);
-    float mark = max(grid * 0.85, frame);
+    float mark = max(grid * 0.5, frame);
     vec3 color = mix(uFill, uLine, mark);
-    float alpha = uAlpha * (0.12 + mark * 0.88);
+    float alpha = uAlpha * (0.04 + mark * 0.96);
     gl_FragColor = vec4(color, alpha);
   }
 `;
@@ -104,23 +112,30 @@ export function mountHeroScene(stage: HTMLElement): () => void {
   host.appendChild(gl.canvas);
   gl.canvas.className = 'hero__canvas';
 
-  const camera = new Camera(gl, { fov: 36, near: 0.1, far: 40 });
-  camera.position.set(1.35, 1.1, 3.8);
-  camera.lookAt([-0.2, 0.05, -0.8]);
+  const camera = new Camera(gl, {
+    fov: CAMERA_FOV,
+    near: 0.1,
+    far: 40,
+  });
+  camera.position.set(0, 0.35, CAMERA_DISTANCE);
+  camera.lookAt([0, -0.3, -0.85]);
 
   const scene = new Transform();
-  const geometry = new Plane(gl, { width: 2.35, height: 1.55 });
+  const geometry = new Plane(gl, {
+    width: PLANE_WIDTH,
+    height: PLANE_HEIGHT,
+  });
 
-  const layers: { mesh: Mesh; baseZ: number; baseX: number; baseY: number }[] =
-    [];
+  const layers: { mesh: Mesh; baseY: number; baseZ: number }[] = [];
 
   for (let i = 0; i < LAYER_COUNT; i++) {
     const depth = i / (LAYER_COUNT - 1);
-    const near = 1 - depth;
+    // Красный только намёком на ближнем слое, дальше — графит
+    const accent = Math.max(0, 0.45 - depth) / 0.45;
     const line = new Color(
-      plotter[0] * (0.55 + near * 0.45) + graphite[0] * depth * 0.35,
-      plotter[1] * (0.55 + near * 0.45) + graphite[1] * depth * 0.35,
-      plotter[2] * (0.55 + near * 0.45) + graphite[2] * depth * 0.35
+      plotter[0] * accent + graphite[0] * (1 - accent),
+      plotter[1] * accent + graphite[1] * (1 - accent),
+      plotter[2] * accent + graphite[2] * (1 - accent)
     );
 
     const program = new Program(gl, {
@@ -134,13 +149,13 @@ export function mountHeroScene(stage: HTMLElement): () => void {
         uLine: { value: line },
         uFill: {
           value: new Color(
-            paper[0] * 0.82 + ink[0] * 0.18,
-            paper[1] * 0.82 + ink[1] * 0.18,
-            paper[2] * 0.82 + ink[2] * 0.18
+            paper[0] * 0.94 + ink[0] * 0.06,
+            paper[1] * 0.94 + ink[1] * 0.06,
+            paper[2] * 0.94 + ink[2] * 0.06
           ),
         },
-        uAlpha: { value: 0.9 - depth * 0.58 },
-        uGrid: { value: 8 },
+        uAlpha: { value: 0.78 - depth * 0.52 },
+        uGrid: { value: 6 },
       },
     });
 
@@ -150,15 +165,13 @@ export function mountHeroScene(stage: HTMLElement): () => void {
     }
 
     const mesh = new Mesh(gl, { geometry, program });
-    const baseZ = -i * 0.72;
-    const baseX = -0.15 + i * 0.06;
-    const baseY = 0.15 - i * 0.08;
-    mesh.position.set(baseX, baseY, baseZ);
-    // Меньший наклон: читаются как стопка панелей, а не как пол
-    mesh.rotation.x = -0.62;
-    mesh.rotation.y = 0.28;
+    // Слои спускаются вниз: та же геометрия, повторённая в глубину
+    const baseY = 0.55 - i * LAYER_STEP;
+    const baseZ = -i * LAYER_STEP;
+    mesh.position.set(0, baseY, baseZ);
+    mesh.rotation.x = -0.55;
     mesh.setParent(scene);
-    layers.push({ mesh, baseZ, baseX, baseY });
+    layers.push({ mesh, baseY, baseZ });
   }
 
   let raf = 0;
@@ -174,11 +187,22 @@ export function mountHeroScene(stage: HTMLElement): () => void {
   };
 
   const resize = () => {
-    const rect = stage.getBoundingClientRect();
+    // Размер берётся у host: на десктопе он занимает только правую часть,
+    // и сцена не наезжает на заголовок.
+    const rect = host.getBoundingClientRect();
     const width = Math.max(1, Math.floor(rect.width));
     const height = Math.max(1, Math.floor(rect.height));
+    const aspect = width / height;
     renderer.setSize(width, height);
-    camera.perspective({ aspect: width / height });
+    camera.perspective({ aspect });
+
+    // Сцена вписывается по узкой стороне, иначе панели режутся по краям
+    const halfWidth = HALF_HEIGHT * aspect;
+    const fit = Math.min(1, halfWidth / (PLANE_WIDTH * 0.85));
+    scene.scale.set(fit, fit, fit);
+
+    // Уводим разрез из-под заголовка: на узком экране — вниз
+    scene.position.y = aspect > 0.9 ? -0.3 : -0.75;
   };
 
   const readScroll = () => {
@@ -196,20 +220,14 @@ export function mountHeroScene(stage: HTMLElement): () => void {
       const drift = Math.sin(phase * Math.PI * 2);
       const sway = Math.cos(phase * Math.PI * 2);
 
-      camera.position.x = 1.35 + sway * 0.35;
-      camera.position.y = 1.1 + drift * 0.18;
-      camera.position.z = 3.8 - scrollPush * 2.6;
-      camera.lookAt([
-        -0.2 + sway * 0.1,
-        0.05 - scrollPush * 0.2,
-        -0.8 - scrollPush * 1.2,
-      ]);
+      // Прокрутка опускает камеру сквозь слои, idle-движение только дышит
+      camera.position.x = sway * 0.06;
+      camera.position.y = 0.35 + drift * 0.05 - scrollPush * 1.6;
+      camera.position.z = CAMERA_DISTANCE - scrollPush * 0.6;
+      camera.lookAt([0, -0.3 - scrollPush * 1.6, -0.85]);
 
       for (const layer of layers) {
-        layer.mesh.position.x = layer.baseX + sway * 0.04;
-        layer.mesh.position.y = layer.baseY + drift * 0.03;
-        layer.mesh.position.z = layer.baseZ + scrollPush * 0.55;
-        layer.mesh.rotation.z = sway * 0.03;
+        layer.mesh.position.y = layer.baseY + drift * 0.04;
       }
 
       renderer.render({ scene, camera });

@@ -131,13 +131,23 @@ const fallbackPlanes = [0, 1, 2, 3, 4, 5];
     z-index: 1;
   }
 
-  .hero__canvas-host,
+  .hero__canvas-host {
+    position: absolute;
+    inset: 0;
+  }
+
   .hero__canvas {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     display: block;
+  }
+
+  @media (min-width: 900px) {
+    .hero__canvas-host {
+      left: 54%;
+    }
   }
 
   .hero__canvas {
@@ -153,55 +163,60 @@ const fallbackPlanes = [0, 1, 2, 3, 4, 5];
     position: absolute;
     inset: 0;
     display: grid;
-    place-items: center;
-    perspective: 920px;
-    perspective-origin: 50% 42%;
+    justify-items: center;
+    align-items: end;
+    padding-bottom: 12%;
+    perspective: 900px;
+    perspective-origin: 50% 30%;
     transition: opacity 0.5s ease;
+  }
+
+  @media (min-width: 900px) {
+    .hero__fallback {
+      left: 54%;
+      align-items: center;
+      padding-bottom: 6%;
+      perspective-origin: 50% 30%;
+    }
   }
 
   .hero__stack {
     position: relative;
-    width: min(72vw, 560px);
-    aspect-ratio: 3 / 2;
+    width: min(48vw, 250px);
+    aspect-ratio: 16 / 9;
     transform-style: preserve-3d;
-    transform: rotateX(36deg) rotateY(-18deg) rotateZ(-2deg);
-    margin-left: 12vw;
+    transform: rotateX(30deg);
   }
 
   .hero__plane {
     position: absolute;
     inset: 0;
-    border: 1px solid color-mix(in srgb, var(--plotter) 48%, var(--rule));
-    background-color: color-mix(in srgb, var(--paper-2) 55%, transparent);
+    border: 1px solid color-mix(in srgb, var(--graphite) 40%, transparent);
     background-image:
-      linear-gradient(to right, color-mix(in srgb, var(--graphite) 34%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in srgb, var(--graphite) 34%, transparent) 1px, transparent 1px);
-    background-size: 12.5% 12.5%;
-    transform: translate3d(
-      calc(var(--i) * 8px),
-      calc(var(--i) * -6px),
-      calc(var(--i) * -58px)
-    );
-    opacity: calc(0.86 - var(--i) * 0.1);
+      linear-gradient(to right, color-mix(in srgb, var(--graphite) 22%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in srgb, var(--graphite) 22%, transparent) 1px, transparent 1px);
+    background-size: 16.66% 16.66%;
+    transform: translate3d(0, calc(var(--i) * 40px), calc(var(--i) * -32px));
+    opacity: calc(0.66 - var(--i) * 0.09);
   }
 
   .hero__plane:nth-child(1) {
-    border-color: color-mix(in srgb, var(--plotter) 78%, var(--rule));
+    border-color: color-mix(in srgb, var(--plotter) 58%, var(--rule));
   }
 
   @media (prefers-reduced-motion: no-preference) {
     .hero__stack {
-      animation: stack-drift 28s ease-in-out infinite;
+      animation: stack-drift 30s ease-in-out infinite;
     }
   }
 
   @keyframes stack-drift {
     0%,
     100% {
-      transform: rotateX(36deg) rotateY(-18deg) rotateZ(-2deg) translateY(0);
+      transform: rotateX(38deg) translateY(0);
     }
     50% {
-      transform: rotateX(32deg) rotateY(-12deg) rotateZ(1deg) translateY(8px);
+      transform: rotateX(35deg) translateY(-10px);
     }
   }
 
