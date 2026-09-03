@@ -64,8 +64,8 @@ const line = (label, value) => console.log(`${label.padEnd(34)} ${value}`);
   line('без JS: длина текста', `${text.length} символов`);
   line('без JS: часы показывают', clock);
   line('без JS: кнопка копирования скрыта', copyHidden ? 'да' : 'НЕТ');
-  line('без JS: есть заголовок', /Собираю продукты целиком/.test(text) ? 'да' : 'НЕТ');
-  line('без JS: есть контакты', /yandex\.ru/.test(text) ? 'да' : 'НЕТ');
+  line('без JS: есть заголовок', /От интерфейса до базы данных/.test(text) ? 'да' : 'НЕТ');
+  line('без JS: есть контакты', /squanbri@gmail\.com/.test(text) ? 'да' : 'НЕТ');
   void state;
   await page.close();
 }

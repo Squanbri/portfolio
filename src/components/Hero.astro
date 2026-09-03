@@ -1,7 +1,5 @@
 ---
-import { site, totalExperience } from '../data/site';
-
-const experience = totalExperience();
+import { site } from '../data/site';
 ---
 
 <header class="band hero">
@@ -42,7 +40,7 @@ const experience = totalExperience();
 
       <div class="mask mask--d">
         <div class="hero__foot">
-          <p class="note hero__exp">{experience} в коммерческой разработке</p>
+          <p class="note hero__exp">{site.experienceLabel} в коммерческой разработке</p>
           <p class="hero__links">
             <a class="link" href={`mailto:${site.email}`}>Написать на почту</a>
             <a class="link" href={site.telegram} rel="me noopener">Telegram</a>
