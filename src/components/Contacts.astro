@@ -1,0 +1,155 @@
+---
+import { site, updatedAt } from '../data/site';
+---
+
+<section class="band" id="contacts" aria-labelledby="contacts-title">
+  <div class="band__inner">
+    <p class="note">
+      <b>Связь</b>
+      обновлено {updatedAt()}
+    </p>
+
+    <div>
+      <h2 id="contacts-title">Как меня найти</h2>
+      <p class="lead stamp__lead">
+        Если по проектам возникли вопросы — пишите, разберу подробно и покажу
+        код.
+      </p>
+
+      <dl class="stamp">
+        <div class="stamp__cell stamp__cell--wide">
+          <dt>Почта</dt>
+          <dd class="stamp__mail">
+            <a href={`mailto:${site.email}`}>{site.email}</a>
+            <button
+              class="stamp__copy"
+              type="button"
+              data-copy={site.email}
+              hidden
+            >
+              Скопировать
+            </button>
+          </dd>
+        </div>
+
+        <div class="stamp__cell">
+          <dt>Telegram</dt>
+          <dd>
+            <a href={site.telegram} rel="me noopener">{site.telegramLabel}</a>
+          </dd>
+        </div>
+
+        <div class="stamp__cell">
+          <dt>GitHub</dt>
+          <dd><a href={site.github} rel="me noopener">{site.githubLabel}</a></dd>
+        </div>
+
+        <div class="stamp__cell">
+          <dt>Резюме</dt>
+          <dd><a href={site.resume} rel="noopener">PDF</a></dd>
+        </div>
+
+        <div class="stamp__cell">
+          <dt>Город</dt>
+          <dd>{site.city}, UTC+3</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<script is:inline data-astro-rerun>
+  (() => {
+    const button = document.querySelector('[data-copy]');
+    if (!button || !navigator.clipboard) return;
+    button.hidden = false;
+    const label = button.textContent;
+    let timer;
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(button.dataset.copy);
+        button.textContent = 'Скопировано';
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          button.textContent = label;
+        }, 2200);
+      } catch {
+        button.textContent = 'Не вышло, скопируйте вручную';
+      }
+    });
+  })();
+</script>
+
+<style>
+  .stamp__lead {
+    margin-top: 12px;
+  }
+
+  /* Штамп чертежа: ячейки разделены волосяными линиями */
+  .stamp {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: var(--hair);
+    margin-top: 28px;
+  }
+
+  @media (min-width: 720px) {
+    .stamp {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .stamp__cell {
+    background: var(--paper-2);
+    padding: 14px 16px;
+    display: grid;
+    gap: 4px;
+    align-content: start;
+    min-width: 0;
+  }
+
+  /* Ячейка почты шире остальных, и сетка сходится без дыр и на двух, и на трёх колонках */
+  .stamp__cell--wide {
+    grid-column: span 2;
+  }
+
+  .stamp dt {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--graphite);
+  }
+
+  .stamp dd {
+    margin: 0;
+    font-size: 0.9375rem;
+    overflow-wrap: anywhere;
+  }
+
+  .stamp a {
+    text-decoration-color: var(--rule);
+    text-underline-offset: 3px;
+  }
+
+  .stamp a:hover,
+  .stamp a:active {
+    color: var(--plotter);
+    text-decoration-color: var(--plotter);
+  }
+
+  .stamp__mail {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 16px;
+  }
+
+  .stamp__copy {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--plotter);
+    border-bottom: 1px solid var(--plotter);
+    padding-bottom: 1px;
+  }
+</style>

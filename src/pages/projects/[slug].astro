@@ -1,519 +1,220 @@
 ---
+import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import ScreenshotSlider from '../../components/ScreenshotSlider.astro';
-import ArchitectureDiagram from '../../components/ArchitectureDiagram.astro';
-import { projects, getProject, projectKindLabel } from '../../data/content';
+import Chain from '../../components/Chain.astro';
+import ArchFlow from '../../components/ArchFlow.astro';
+import { site } from '../../data/site';
 
-export function getStaticPaths() {
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
   return projects.map((project) => ({
-    params: { slug: project.slug },
+    params: { slug: project.id },
+    props: { project },
   }));
 }
 
-const { slug } = Astro.params;
-const project = getProject(slug!);
-
-if (!project) {
-  return Astro.redirect('/');
-}
-
-const hasFeatures = Boolean(project.features?.length);
-const hasContributions = Boolean(project.contributions?.length);
-const hasDecisions = Boolean(project.decisions?.length);
-const hasDiagram = Boolean(project.architecture?.diagram);
-const hasNodeFlow = Boolean(project.architecture?.nodes?.length);
-const hasRichArchitecture = hasDiagram || hasNodeFlow;
-const hasArchitecture = Boolean(project.architectureNote) || hasRichArchitecture;
-const primaryLink = project.links[0];
-const showCta = Boolean(project.cta && primaryLink);
-const aboutParagraphs = project.paragraphs?.length
-  ? project.paragraphs
-  : [project.description];
-const contributionsTitle =
-  project.kind === 'product' ? 'Мой вклад' : 'Что сделал';
-
-let step = 1;
-const steps = {
-  about: String(step++).padStart(2, '0'),
-  screens: project.screenshots.length ? String(step++).padStart(2, '0') : null,
-  contributions: hasContributions ? String(step++).padStart(2, '0') : null,
-  features: hasFeatures ? String(step++).padStart(2, '0') : null,
-  decisions: hasDecisions ? String(step++).padStart(2, '0') : null,
-  architecture: hasArchitecture ? String(step++).padStart(2, '0') : null,
-  stack: String(step++).padStart(2, '0'),
-};
+const { project } = Astro.props;
+const { data } = project;
+const { Content } = await render(project);
 ---
 
-<BaseLayout title={`${project.title} — Евгений Маркитан`} description={project.summary}>
-  <article class="project-page">
-    <div class="container">
-      <a class="back" href="/#projects">← К портфолио</a>
+<BaseLayout
+  title={`${data.title} — ${site.name}`}
+  description={data.intro}
+>
+  <article class="band">
+    <div class="band__inner">
+      <p class="note">
+        <b>{data.year}</b>
+        {data.kind}
+      </p>
 
-      <header class="hero">
-        <p class="project-meta">
-          <span class="project-kind">{projectKindLabel[project.kind]}</span>
-          {
-            project.eyebrow && (
-              <>
-                <span class="project-meta-sep" aria-hidden="true">
-                  ·
-                </span>
-                <span class="project-meta-note">{project.eyebrow}</span>
-              </>
-            )
-          }
-        </p>
-        <h1>{project.title}</h1>
-        <p class="summary">{project.summary}</p>
+      <div>
+        <p class="back"><a class="link" href="/">На главную</a></p>
 
-        {
-          project.links.length > 0 && (
-            <div class="hero-actions">
-              {project.links.map((link, index) => (
-                <a
-                  class:list={['btn', index === 0 ? 'btn-primary' : 'btn-ghost']}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {link.label}
-                  <span aria-hidden="true">↗</span>
-                </a>
-              ))}
-            </div>
-          )
-        }
-      </header>
-
-      <section class="block" aria-labelledby="about-title">
-        <div class="section-title">
-          <p class="step">{steps.about}</p>
-          <h2 id="about-title">О проекте</h2>
-        </div>
-        <div class="prose-block">
-          {aboutParagraphs.map((paragraph) => (
-            <p class="prose">{paragraph}</p>
-          ))}
-        </div>
-      </section>
-
-      {
-        steps.screens && (
-          <section class="screens block" aria-labelledby="screens-title">
-            <div class="section-title">
-              <p class="step">{steps.screens}</p>
-              <h2 id="screens-title">Интерфейс</h2>
-            </div>
-            <ScreenshotSlider images={project.screenshots} id={`project-${project.slug}`} />
-          </section>
-        )
-      }
-
-      {
-        hasContributions && (
-          <section class="block" aria-labelledby="contributions-title">
-            <div class="section-title">
-              <p class="step">{steps.contributions}</p>
-              <h2 id="contributions-title">{contributionsTitle}</h2>
-            </div>
-
-            <ul class="features">
-              {project.contributions!.map((item) => (
-                <li class="feature">
-                  <h3>{item.title}</h3>
-                  <p>{item.text}</p>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )
-      }
-
-      {
-        hasFeatures && (
-          <section class="block" aria-labelledby="features-title">
-            <div class="section-title">
-              <p class="step">{steps.features}</p>
-              <h2 id="features-title">Что умеет</h2>
-            </div>
-
-            <ul class="features">
-              {project.features!.map((feature) => (
-                <li class="feature">
-                  <h3>{feature.title}</h3>
-                  <p>{feature.text}</p>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )
-      }
-
-      {
-        hasDecisions && (
-          <section class="block" aria-labelledby="decisions-title">
-            <div class="section-title">
-              <p class="step">{steps.decisions}</p>
-              <h2 id="decisions-title">Ключевые решения</h2>
-            </div>
-
-            <ul class="decisions">
-              {project.decisions!.map((item) => (
-                <li class="decision">
-                  <h3>{item.title}</h3>
-                  <p>{item.text}</p>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )
-      }
-
-      {
-        hasArchitecture && (
-          <section class="block" aria-labelledby="architecture-title">
-            <div class="section-title">
-              <p class="step">{steps.architecture}</p>
-              <h2 id="architecture-title">Архитектура</h2>
-            </div>
-
-            {
-              hasRichArchitecture ? (
-                <div class="architecture">
-                  {project.architecture?.diagram ? (
-                    <ArchitectureDiagram
-                      variant={project.architecture.diagram}
-                      title={`Схема архитектуры ${project.title}`}
-                    />
-                  ) : (
-                    <div
-                      class="architecture-flow"
-                      aria-label={`Схема архитектуры ${project.title}`}
-                    >
-                      {project.architecture!.nodes!.map((node, index) => (
-                        <>
-                          {index > 0 && (
-                            <span class="arch-arrow" aria-hidden="true">
-                              →
-                            </span>
-                          )}
-                          <div class="arch-node">
-                            <span>{node.label}</span>
-                            <strong>{node.title}</strong>
-                          </div>
-                        </>
-                      ))}
-                    </div>
-                  )}
-
-                  {
-                    project.architecture?.targets &&
-                      project.architecture.targets.length > 0 && (
-                        <div class="architecture-targets">
-                          {project.architecture.targets.map((target) => (
-                            <span>{target}</span>
-                          ))}
-                        </div>
-                      )
-                  }
-
-                  {project.architectureNote && (
-                    <p class="architecture-note">{project.architectureNote}</p>
-                  )}
-                </div>
-              ) : (
-                <p class="prose">{project.architectureNote}</p>
-              )
-            }
-          </section>
-        )
-      }
-
-      <section class="stack block" aria-labelledby="stack-title">
-        <div class="section-title">
-          <p class="step">{steps.stack}</p>
-          <h2 id="stack-title">Технологии</h2>
-        </div>
-        <ul class="tag-list">
-          {project.stack.map((item) => (
-            <li>
-              <span class="tag">{item}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      {
-        showCta && (
-          <footer class="project-cta">
-            <div>
-              <p class="eyebrow">{project.cta!.eyebrow}</p>
-              <h2>{project.cta!.title}</h2>
-            </div>
-            <a
-              class="btn btn-primary"
-              href={primaryLink.href}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {project.cta!.label} <span aria-hidden="true">↗</span>
-            </a>
-          </footer>
-        )
-      }
+        <h1 class="project-title" style={`view-transition-name: p-${project.id}`}>
+          {data.title}
+        </h1>
+        <p class="lead project-intro">{data.intro}</p>
+        <div class="project-chain"><Chain items={data.stack} /></div>
+      </div>
     </div>
   </article>
+
+  <section class="band" aria-labelledby="problem-title">
+    <div class="band__inner">
+      <p class="note"><b>Задача</b>зачем это вообще</p>
+      <div>
+        <h2 id="problem-title">Почему я за это взялся</h2>
+        <p class="problem">{data.problem}</p>
+      </div>
+    </div>
+  </section>
+
+  {
+    data.arch.length > 0 && (
+      <section class="band" aria-labelledby="arch-title">
+        <div class="band__inner">
+          <p class="note">
+            <b>Архитектура</b>
+            {data.arch.length} слоя, сверху вниз
+          </p>
+          <div>
+            <h2 id="arch-title">Как устроено</h2>
+            <ArchFlow layers={data.arch} />
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="band" aria-labelledby="detail-title">
+    <div class="band__inner">
+      <p class="note"><b>Разбор</b>решения и грабли</p>
+      <div class="prose">
+        <h2 id="detail-title" class="visually-hidden">Разбор</h2>
+        <Content />
+      </div>
+    </div>
+  </section>
+
+  {
+    data.shots.length > 0 && (
+      <section class="band" aria-labelledby="shots-title">
+        <div class="band__inner">
+          <p class="note">
+            <b>Экраны</b>
+            {data.shots.length === 1 ? 'один снимок' : `${data.shots.length} снимка`}
+          </p>
+          <div>
+            <h2 id="shots-title">Как это выглядит</h2>
+            <ul class="shots">
+              {data.shots.map((shot) => (
+                <li class="shot">
+                  <Image
+                    src={shot.src}
+                    alt={shot.alt}
+                    widths={[560, 900, 1280]}
+                    sizes="(min-width: 900px) 800px, 92vw"
+                    format="webp"
+                    quality={70}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p class="note shot__caption">{shot.alt}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="band" aria-labelledby="links-title">
+    <div class="band__inner">
+      <p class="note"><b>Ссылки</b>посмотреть вживую</p>
+      <div>
+        <h2 id="links-title">Куда посмотреть</h2>
+        <ul class="outlinks">
+          {
+            data.links.map((link) => (
+              <li>
+                <a class="link" href={link.href} rel="noopener">
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+          <li><a class="link" href="/#contacts">Написать мне</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
 </BaseLayout>
 
 <style>
-  .project-page {
-    padding-block: clamp(2rem, 6vw, 4rem);
-  }
-
   .back {
-    display: inline-flex;
-    margin-bottom: clamp(1.75rem, 4vw, 3rem);
-    color: var(--text-muted);
-    font-size: 0.95rem;
-    font-weight: 600;
-    text-decoration: none;
+    margin-bottom: 26px;
   }
 
-  .back:hover {
-    color: var(--accent);
+  .project-title {
+    font-size: clamp(2.25rem, 9.5vw, 4rem);
+    font-weight: 800;
+    letter-spacing: -0.035em;
   }
 
-  .hero {
-    max-width: 44rem;
-    margin-bottom: clamp(2.5rem, 6vw, 4rem);
+  .project-intro {
+    margin-top: 16px;
+    color: var(--ink);
+    font-size: clamp(1.0625rem, 3.8vw, 1.1875rem);
+    max-width: 48ch;
   }
 
-  .eyebrow,
-  .step {
-    margin: 0;
-    color: var(--accent);
-    font-family: var(--font-mono);
-    font-size: 0.76rem;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+  .project-chain {
+    margin-top: 22px;
   }
 
-  .project-meta {
-    margin-bottom: 0;
-  }
-
-  h1 {
-    margin: 0.55rem 0 0.85rem;
-    font-size: clamp(2.25rem, 5vw, 3.4rem);
-    line-height: 1.1;
-    letter-spacing: -0.04em;
-  }
-
-  .summary {
-    max-width: 40rem;
-    margin: 0;
-    color: var(--text-muted);
-    font-size: clamp(1.05rem, 2vw, 1.2rem);
-    line-height: 1.5;
-  }
-
-  .hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.65rem;
-    margin-top: 1.5rem;
-  }
-
-  .block {
-    margin-bottom: clamp(2.75rem, 7vw, 4.5rem);
-  }
-
-  .section-title {
-    display: flex;
-    align-items: baseline;
-    gap: 0.75rem;
-    margin-bottom: 1.15rem;
-  }
-
-  .section-title h2,
-  .project-cta h2 {
-    margin: 0;
-    font-size: clamp(1.35rem, 3vw, 1.75rem);
-    letter-spacing: -0.03em;
-  }
-
-  .prose-block {
-    display: grid;
-    gap: 0.9rem;
-    max-width: 44rem;
+  .problem {
+    margin-top: 18px;
+    max-width: 60ch;
   }
 
   .prose {
-    max-width: 44rem;
-    margin: 0;
-    color: var(--text-muted);
-    font-size: 1.05rem;
-    line-height: 1.65;
+    max-width: 62ch;
   }
 
-  .screens :global(.viewport) {
-    box-shadow: var(--shadow);
+  .prose :global(h2) {
+    font-size: clamp(1.375rem, 4.6vw, 1.75rem);
+    margin-bottom: 4px;
   }
 
-  .features,
-  .decisions {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  .prose :global(h2:not(:first-of-type)) {
+    margin-top: 44px;
+    padding-top: 26px;
+    border-top: var(--hair);
+  }
+
+  .prose :global(h3) {
+    margin-top: 30px;
+    font-size: 1.0625rem;
+    font-weight: 600;
+  }
+
+  .prose :global(p) {
+    margin-top: 12px;
+  }
+
+  .prose :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    background: var(--paper-2);
+    border: var(--hair);
+    padding: 0 4px;
+  }
+
+  .shots {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0;
-    border-top: 1px solid var(--border);
+    gap: 30px;
+    margin-top: 24px;
   }
 
-  .feature,
-  .decision {
-    padding: 1.15rem 1.25rem 1.15rem 0;
-    border-bottom: 1px solid var(--border);
+  .shot :global(img) {
+    width: 100%;
+    height: auto;
+    border: var(--hair);
   }
 
-  .feature:nth-child(even),
-  .decision:nth-child(even) {
-    padding-left: 1.25rem;
-    padding-right: 0;
+  .shot__caption {
+    margin-top: 8px;
+    max-width: 60ch;
   }
 
-  .feature h3,
-  .decision h3 {
-    margin: 0 0 0.3rem;
-    font-size: 1.05rem;
-  }
-
-  .feature p,
-  .decision p {
-    margin: 0;
-    color: var(--text-muted);
-    font-size: 0.95rem;
-    line-height: 1.45;
-  }
-
-  .architecture {
-    padding: clamp(1rem, 3vw, 1.5rem) 0;
-  }
-
-  .architecture-flow,
-  .simple-arch {
+  .outlinks {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 0.55rem 0.65rem;
-  }
-
-  .arch-node {
-    padding: 0.7rem 0.9rem;
-    border: 1px dashed var(--border);
-    border-radius: 6px;
-    background: transparent;
-    text-align: left;
-  }
-
-  .arch-node span {
-    display: block;
-    margin-bottom: 0.15rem;
-    color: var(--text-muted);
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    text-transform: uppercase;
-  }
-
-  .arch-node strong {
-    font-size: 0.9rem;
-    font-weight: 650;
-  }
-
-  .arch-arrow {
-    flex: 0 0 auto;
-    color: var(--accent);
-    font-family: var(--font-mono);
-  }
-
-  .architecture-targets {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.45rem;
-    margin-top: 1rem;
-  }
-
-  .architecture-targets span {
-    padding: 0.3rem 0.55rem;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    color: var(--text-muted);
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-  }
-
-  .architecture-note {
-    max-width: 40rem;
-    margin: 1.25rem 0 0;
-    color: var(--text-muted);
-  }
-
-  .simple-arch {
-    margin-top: 1rem;
-  }
-
-  .stack .tag-list {
-    gap: 0.5rem;
-  }
-
-  .stack .tag {
-    padding: 0.4rem 0.65rem;
-    color: var(--text);
-  }
-
-  .project-cta {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--border);
-  }
-
-  .project-cta h2 {
-    margin-top: 0.25rem;
-  }
-
-  @media (max-width: 720px) {
-    .features,
-    .decisions {
-      grid-template-columns: 1fr;
-    }
-
-    .feature,
-    .feature:nth-child(even),
-    .decision,
-    .decision:nth-child(even) {
-      padding-left: 0;
-      padding-right: 0;
-    }
-
-    .architecture-flow {
-      flex-direction: column;
-      align-items: stretch;
-    }
-
-    .arch-arrow {
-      transform: rotate(90deg);
-      align-self: center;
-    }
-
-    .project-cta {
-      align-items: flex-start;
-      flex-direction: column;
-    }
+    gap: 14px 28px;
+    margin-top: 20px;
   }
 </style>

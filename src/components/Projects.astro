@@ -1,137 +1,158 @@
 ---
-import { projects, projectKindLabel } from '../data/content';
-import ScreenshotSlider from './ScreenshotSlider.astro';
+import type { CollectionEntry } from 'astro:content';
+import Chain from './Chain.astro';
 
-const ordered = [...projects].sort((a, b) => {
-  if (a.kind === b.kind) return 0;
-  return a.kind === 'personal' ? -1 : 1;
-});
+interface Props {
+  items: CollectionEntry<'projects'>[];
+}
+
+const { items } = Astro.props;
 ---
 
-<section id="projects" class="section">
-  <div class="container">
-    <div class="section-header">
-      <h2>Проекты</h2>
-      <p>
-        Full-stack pet-проекты и коммерческие продукты — от desktop/API до
-        мобильных клиентов.
-      </p>
-    </div>
+<section class="band" aria-labelledby="projects-title">
+  <div class="band__inner">
+    <p class="note">
+      <b>Проекты</b>
+      открытый код у двух из трёх
+    </p>
 
-    <div class="list">
-      {
-        ordered.map((project) => (
-          <article class="project">
-            <div class="copy">
-              <p class="project-meta">
-                <span class="project-kind">{projectKindLabel[project.kind]}</span>
-                {
-                  project.eyebrow && (
-                    <>
-                      <span class="project-meta-sep" aria-hidden="true">
-                        ·
-                      </span>
-                      <span class="project-meta-note">{project.eyebrow}</span>
-                    </>
-                  )
-                }
+    <div class="projects">
+      <span class="projects__pen" aria-hidden="true"></span>
+      <h2 id="projects-title">Что я собрал</h2>
+
+      <ul class="projects__list">
+        {
+          items.map((project) => (
+            <li class="card">
+              <p class="note card__note">
+                <b>{project.data.year}</b>
+                {project.data.kind}
               </p>
-              <h3>
-                <a href={`/projects/${project.slug}`}>{project.title}</a>
+              <h3
+                class="card__title"
+                style={`view-transition-name: p-${project.id}`}
+              >
+                <a class="card__link" href={`/projects/${project.id}/`}>
+                  {project.data.title}
+                </a>
               </h3>
-              <p>{project.summary}</p>
-              <ul class="tag-list">
-                {project.stack.slice(0, 5).map((item) => (
-                  <li>
-                    <span class="tag">{item}</span>
-                  </li>
-                ))}
-                {project.stack.length > 5 && (
-                  <li>
-                    <span class="tag muted">+{project.stack.length - 5}</span>
-                  </li>
-                )}
-              </ul>
-              <p class="more">
-                <a href={`/projects/${project.slug}`}>Подробнее →</a>
-              </p>
-            </div>
-            <div class="media">
-              <ScreenshotSlider
-                images={project.screenshots}
-                id={`slider-${project.slug}`}
-              />
-            </div>
-          </article>
-        ))
-      }
+              <p class="card__text">{project.data.tagline}</p>
+              <Chain items={project.data.stack} />
+            </li>
+          ))
+        }
+      </ul>
     </div>
   </div>
 </section>
 
 <style>
-  .list {
+  .projects {
+    position: relative;
+    padding-left: 18px;
+  }
+
+  @media (min-width: 900px) {
+    .projects {
+      padding-left: 26px;
+    }
+  }
+
+  /* Выносная линия: прочерчивается по мере прокрутки, без JS */
+  .projects__pen {
+    position: absolute;
+    left: 0;
+    top: 4px;
+    bottom: 4px;
+    width: 1px;
+    background: var(--plotter);
+  }
+
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .projects__pen {
+        transform: scaleY(0);
+        transform-origin: top center;
+        /* Только лонгханды: шорткат animation сбрасывает duration в 0s,
+           и по прогресс-таймлайну линия так и остаётся непрочерченной. */
+        animation-name: pen-down;
+        animation-duration: auto;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range: cover 6% cover 84%;
+      }
+    }
+  }
+
+  @keyframes pen-down {
+    to {
+      transform: scaleY(1);
+    }
+  }
+
+  .projects__list {
+    margin-top: 26px;
+  }
+
+  .card {
+    position: relative;
     display: grid;
-    gap: 2.5rem;
+    gap: 9px;
+    border: var(--hair);
+    padding: 18px 16px 20px;
   }
 
-  .project {
-    display: grid;
-    grid-template-columns: 1fr 1.15fr;
-    gap: clamp(1.25rem, 3vw, 2rem);
-    align-items: start;
-    padding-bottom: 2.5rem;
-    border-bottom: 1px solid var(--border);
+  .card + .card {
+    margin-top: -1px;
   }
 
-  .project:last-child {
-    border-bottom: 0;
-    padding-bottom: 0;
+  @media (min-width: 900px) {
+    .card {
+      padding: 24px;
+    }
   }
 
-  .project-meta {
-    margin-bottom: 0.45rem;
+  .card__note {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 10px;
   }
 
-  h3 {
-    margin: 0 0 0.5rem;
-    font-size: 1.35rem;
+  .card__note b {
+    display: inline;
   }
 
-  h3 a {
-    color: var(--text);
-    text-decoration: none;
-  }
-
-  h3 a:hover {
-    color: var(--accent);
-  }
-
-  .copy > p {
-    margin: 0 0 0.9rem;
-    color: var(--text-muted);
-  }
-
-  .muted {
-    opacity: 0.7;
-  }
-
-  .copy >.more {
-    margin: 1rem 0 0;
-  }
-
-  .more a {
+  .card__title {
+    font-size: clamp(1.25rem, 4.8vw, 1.625rem);
     font-weight: 600;
+  }
+
+  .card__link {
     text-decoration: none;
   }
 
-  .more a:hover {
-    text-decoration: underline;
+  /* Ссылка растягивается на всю карточку, но фокус остаётся на тексте */
+  .card__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
   }
 
-  @media (max-width: 800px) {
-    .project {
-      grid-template-columns: 1fr;
+  .card__text {
+    max-width: 52ch;
+  }
+
+  .card:focus-within,
+  .card:has(.card__link:active) {
+    border-color: var(--plotter);
+    z-index: 1;
+  }
+
+  @media (hover: hover) {
+    .card:hover {
+      border-color: var(--plotter);
+      z-index: 1;
     }
   }
 </style>

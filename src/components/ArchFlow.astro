@@ -1,0 +1,103 @@
+---
+interface Layer {
+  title: string;
+  nodes: string[];
+  link?: string;
+}
+
+interface Props {
+  layers: Layer[];
+}
+
+const { layers } = Astro.props;
+---
+
+<div class="arch">
+  {
+    layers.map((layer) => (
+      <Fragment>
+        <div class="arch__layer">
+          <p class="note arch__title">{layer.title}</p>
+          <ul class="arch__nodes">
+            {layer.nodes.map((node) => (
+              <li>{node}</li>
+            ))}
+          </ul>
+        </div>
+        {layer.link && (
+          <p class="arch__flow">
+            <span class="arch__stem" aria-hidden="true" />
+            <span class="arch__label">{layer.link}</span>
+          </p>
+        )}
+      </Fragment>
+    ))
+  }
+</div>
+
+<style>
+  .arch {
+    margin-top: 20px;
+    max-width: 560px;
+  }
+
+  .arch__layer {
+    border: var(--hair);
+    background: var(--paper-2);
+    padding: 12px 14px;
+  }
+
+  .arch__nodes {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 0;
+    margin-top: 5px;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+  }
+
+  .arch__nodes li {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* Внутри слоя части параллельны — разделяет черта, а не стрелка */
+  .arch__nodes li:not(:last-child)::after {
+    content: '';
+    width: 1px;
+    height: 0.95em;
+    margin: 0 11px;
+    background: var(--rule);
+  }
+
+  .arch__flow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-left: 18px;
+    height: 46px;
+  }
+
+  .arch__stem {
+    width: 8px;
+    height: 40px;
+    flex: none;
+    background: var(--graphite);
+    clip-path: polygon(
+      3px 0,
+      5px 0,
+      5px 30px,
+      8px 30px,
+      4px 40px,
+      0 30px,
+      3px 30px
+    );
+  }
+
+  .arch__label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--graphite);
+  }
+</style>
