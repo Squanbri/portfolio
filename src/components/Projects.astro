@@ -15,13 +15,13 @@ const offlineSlugs = new Set(['letter-box', 'screen-translator']);
 <section class="band" aria-labelledby="projects-title">
   <div class="band__inner">
     <p class="note">
-      <b>Проекты</b>
-      открытый код у двух из трёх
+      <b>Пет-проекты</b>
+      оба с открытым кодом
     </p>
 
     <div class="projects">
       <span class="projects__pen" aria-hidden="true"></span>
-      <h2 id="projects-title">Проекты</h2>
+      <h2 id="projects-title">Пет-проекты</h2>
 
       <ul class="projects__list">
         {
@@ -41,18 +41,19 @@ const offlineSlugs = new Set(['letter-box', 'screen-translator']);
                       {video ? (
                         <video
                           class="card__media"
+                          autoplay
                           muted
                           loop
                           playsinline
-                          preload="none"
+                          preload="metadata"
                           data-preview-video
                           aria-label={cover.alt}
                         >
-                          {video.webm && (
-                            <source src={video.webm} type="video/webm" />
-                          )}
                           {video.mp4 && (
                             <source src={video.mp4} type="video/mp4" />
+                          )}
+                          {video.webm && (
+                            <source src={video.webm} type="video/webm" />
                           )}
                         </video>
                       ) : null}
@@ -114,7 +115,20 @@ const offlineSlugs = new Set(['letter-box', 'screen-translator']);
     { threshold: 0.55, rootMargin: '0px' }
   );
 
-  cards.forEach((card) => io.observe(card));
+  cards.forEach((card) => {
+    const video = card.querySelector<HTMLVideoElement>('[data-preview-video]');
+    if (video) {
+      const reveal = () => video.setAttribute('data-playing', '');
+      video.addEventListener('playing', reveal);
+      video.addEventListener('loadeddata', reveal);
+      if (video.readyState >= 2) reveal();
+      if (reduce) {
+        video.pause();
+        video.removeAttribute('autoplay');
+      }
+    }
+    io.observe(card);
+  });
 </script>
 
 <style>
@@ -208,10 +222,14 @@ const offlineSlugs = new Set(['letter-box', 'screen-translator']);
   .card__media--poster {
     position: absolute;
     inset: 0;
+    transition:
+      opacity 0.35s ease,
+      filter 0.35s ease;
   }
 
-  video.card__media:not([data-playing]) + .card__media--poster {
-    z-index: 1;
+  video.card__media[data-playing] + .card__media--poster {
+    opacity: 0;
+    pointer-events: none;
   }
 
   .card:hover .card__media,

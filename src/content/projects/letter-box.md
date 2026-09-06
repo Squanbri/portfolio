@@ -43,6 +43,8 @@ shots:
     alt: Единый входящий с фильтрами по тегам и открытым письмом справа
   - src: ../../assets/projects/letter-box/05-compose.webp
     alt: Окно написания письма с выбором аккаунта-отправителя
+previewVideo:
+  mp4: /images/letter-box-demo.mp4
 ---
 
 ## Решения

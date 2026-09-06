@@ -42,6 +42,8 @@ shots:
     alt: Перевод одного слова во всплывающей подсказке рядом с оригиналом
   - src: ../../assets/projects/screen-translator/05-dictionary.webp
     alt: Личный словарь сохранённых слов с переводами
+previewVideo:
+  mp4: /images/screen-translator-demo.mp4
 ---
 
 ## Решения
